@@ -15,12 +15,14 @@ Json(Object)+DynamicXml+DesignPreview
  * Dynamic xml
 
 
-Simple use
+###Simple use
+*************************************************************************************
 
-xml(View)
+layout1.xml(View)
 
 ```xml
  <TextView
+    xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:binding="http://schemas.android.com/apk/res-auto"
     binding:binding="{property=text,path=title}"
     binding:binding2="{event=OnClick,command=click}"
@@ -74,7 +76,7 @@ data(ViewModel)
 Simple bind
 
 ```java
-    View view = ?;
+    View view = inflate(R.id.layout1);
     ViewModel viewModel = new ViewModel();
     BindViewUtil.setDataContext(view, viewModel);
     ...
@@ -83,6 +85,54 @@ Simple bind
     viewModel.setTitle("newTitle");
 ```
 
-************************************************************************
-More use
+###Advance use
+*************************************************************************************
+layout2.xml
+
+
+```xml
+<com.kk.binding.view.BindableFrameLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:design="http://schemas.android.com/apk/res-auto"
+    xmlns:binding="http://schemas.android.com/apk/res-auto"
+    design:propertyDeclareClass="com.kk.binding.PropertyDeclare"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    design:designData="@raw/main">
+    
+     <TextView
+        binding:binding="{property=text,path=data[1].title}"
+        binding:binding2="{event=onClick,path=redirectUrl,command=urlNavCommand}"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content" />
+    
+</com.kk.binding.view.BindableFrameLayout> 
+```
+
+main.json
+
+```json
+ {
+  "data": [
+    {
+      "title": "cat",
+      "redirectUrl":"http://github.com/"
+    },
+    {
+      "title": "dog",
+      "redirectUrl":"http://google.com/"
+    }
+    ]
+}
+```
+
+Simple bind
+
+```java
+    View view = inflate(R.id.layout2);
+    Object object = fromJson() or fromNetwork();
+    BindViewUtil.setDataContext(view, object);
+```
+
+By use our BindableFrameLayout as the root container, you can preview in Android Studio design mode.
 
