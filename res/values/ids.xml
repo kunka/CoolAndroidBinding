@@ -1,0 +1,6 @@
+<resources>
+
+    <item name="tag_for_attach_property" type="id"/>
+    <item name="tag_for_binding_data_object" type="id"/>
+
+</resources>

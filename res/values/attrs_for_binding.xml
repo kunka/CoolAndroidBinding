@@ -1,0 +1,40 @@
+<resources>
+
+    <declare-styleable name="View">
+        <attr name="dataContext" format="string" />
+        <attr name="binding" format="string" />
+        <attr name="binding2" format="string" />
+        <attr name="binding3" format="string" />
+        <attr name="binding4" format="string" />
+        <attr name="binding5" format="string" />
+        <attr name="binding6" format="string" />
+        <attr name="binding7" format="string" />
+        <attr name="binding8" format="string" />
+        <attr name="binding9" format="string" />
+        <attr name="binding10" format="string" />
+        <attr name="binding11" format="string" />
+        <attr name="binding12" format="string" />
+        <attr name="binding13" format="string" />
+        <attr name="binding14" format="string" />
+        <attr name="binding15" format="string" />
+        <attr name="binding16" format="string" />
+        <attr name="binding17" format="string" />
+        <attr name="binding18" format="string" />
+        <attr name="binding19" format="string" />
+        <attr name="binding20" format="string" />
+    </declare-styleable>
+
+    <declare-styleable name="BindableFrameLayout">
+        <attr name="designData" format="reference" />
+        <attr name="realData" format="reference" />
+        <attr name="layout" format="reference" />
+        <attr name="dataClass" format="string" />
+        <attr name="propertyDeclareClass" format="string" />
+        <attr name="designDataContext" format="string" />
+    </declare-styleable>
+
+    <declare-styleable name="BindableAdapterFrameLayout">
+        <attr name="childLayout" format="reference" />
+    </declare-styleable>
+
+</resources>
