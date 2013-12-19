@@ -1,6 +1,5 @@
 package com.kk.binding.command;
 
-import android.content.ActivityNotFoundException;
 import android.content.Intent;
 import android.net.Uri;
 import android.view.View;
@@ -21,8 +20,8 @@ public class UrlNavCommand implements ICommand {
             if (BindEngine.instance().getContext() != null) {
                 try {
                     BindEngine.instance().getContext().startActivity(intent);
-                } catch (ActivityNotFoundException e) {
-                    BindDesignLog.d("UrlNavCommand", e.toString());
+                } catch (Exception e) {
+                    BindDesignLog.e("UrlNavCommand exception ", e.toString());
                 }
             }
         }

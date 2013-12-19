@@ -37,7 +37,7 @@ public abstract class ListenerToCommand {
             try {
                 mCommand.execute(view, args);
             } catch (Exception e) {
-                BindDesignLog.d("ListenerToCommand", "executeCommand failed " + e.toString());
+                BindDesignLog.e("ListenerToCommand", "executeCommand failed " + e.toString());
             }
     }
 

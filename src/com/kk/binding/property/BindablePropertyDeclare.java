@@ -3,7 +3,9 @@
  */
 package com.kk.binding.property;
 
+import android.view.View;
 import android.widget.ImageView;
+import android.widget.RatingBar;
 import android.widget.TextView;
 
 import com.kk.binding.kernel.DependencyProperty;
@@ -30,8 +32,10 @@ public class BindablePropertyDeclare {
     }
 
     private static void initPropertyHashMapInner() {
+        register("visibility", int.class, View.class, 0);
         register("text", CharSequence.class, TextView.class, "");
         register("url", String.class, ImageView.class, "");
+        register("rating", float.class, RatingBar.class, 5);
     }
 
     public static DependencyProperty obtain(String propertyName, Class<?> ownerType) {
@@ -71,7 +75,7 @@ public class BindablePropertyDeclare {
                 }
             }
         }
-        BindDesignLog.d(TAG, "Attempted to obtain an unregister DependencyProperty! propertyName = " + propertyName + " ownerType = " + ownerType);
+        BindDesignLog.e(TAG, "Attempted to obtain an unregister DependencyProperty! propertyName = " + propertyName + " ownerType = " + ownerType);
         return null;
     }
 

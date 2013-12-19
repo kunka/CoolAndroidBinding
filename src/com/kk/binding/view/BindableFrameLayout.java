@@ -68,7 +68,7 @@ public class BindableFrameLayout extends FrameLayout {
             } catch (ClassNotFoundException e) {
                 if (isInEditMode())
                     throw new RuntimeException("parse propertyDeclareClass failed " + e.toString());
-                BindDesignLog.d(TAG, "parse propertyDeclareClass failed " + e.toString());
+                BindDesignLog.e(TAG, "parse propertyDeclareClass failed " + e.toString());
             }
             if (clazz != null) {
                 try {
@@ -78,7 +78,7 @@ public class BindableFrameLayout extends FrameLayout {
                 } catch (Exception e) {
                     if (isInEditMode())
                         throw new RuntimeException("create propertyDeclareClass instance failed " + e.toString());
-                    BindDesignLog.d(TAG, "create propertyDeclareClass instance failed " + e.toString());
+                    BindDesignLog.e(TAG, "create propertyDeclareClass instance failed " + e.toString());
                 }
             }
         }
@@ -170,7 +170,7 @@ public class BindableFrameLayout extends FrameLayout {
             } catch (ClassNotFoundException e) {
                 if (isInEditMode())
                     throw new RuntimeException("parse dataClass failed " + e.toString());
-                BindDesignLog.d(TAG, "parse dataClass failed " + e.toString());
+                BindDesignLog.e(TAG, "parse dataClass failed " + e.toString());
             }
         }
         if (!StringUtil.isNullOrEmpty(dataContext)) {

@@ -2,14 +2,14 @@ package com.kk.binding.view;
 
 import android.content.Context;
 import android.util.AttributeSet;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.LayoutInflater.Factory;
 import android.view.View;
 import android.widget.AdapterView;
 
 import com.kk.binding.command.UrlNavCommand;
-import com.kk.binding.converter.StringToVisibleConverter;
+import com.kk.binding.converter.FalseToVisibleConverter;
+import com.kk.binding.converter.TrueToVisibleConverter;
 import com.kk.binding.kernel.Binding;
 import com.kk.binding.kernel.CommandBinding;
 import com.kk.binding.kernel.DependencyProperty;
@@ -57,12 +57,12 @@ public class ViewFactory implements Factory {
         } catch (Exception e) {
             // design mode cannot find custom class, inflate will failed, shit!
             // so we use the class name to create instance.
-            BindDesignLog.d(TAG, "onCreateView exception = " + e.toString());
+            BindDesignLog.e(TAG, "onCreateView exception = " + e.toString());
             Class<?> clazz = null;
             try {
                 clazz = Class.forName(viewFullName);
             } catch (ClassNotFoundException e0) {
-                BindDesignLog.d(TAG, " class not found " + e0.toString());
+                BindDesignLog.e(TAG, " class not found " + e0.toString());
             }
             if (clazz != null) {
                 BindDesignLog.d(TAG, "onCreateView class founded = " + clazz.toString());
@@ -70,7 +70,7 @@ public class ViewFactory implements Factory {
                 try {
                     constructor = clazz.getDeclaredConstructor(Context.class, AttributeSet.class);
                 } catch (Exception e1) {
-                    BindDesignLog.d(TAG, "onCreateView getDeclaredConstructor failed  = " + e1.toString());
+                    BindDesignLog.e(TAG, "onCreateView getDeclaredConstructor failed  = " + e1.toString());
                 }
 
                 if (constructor != null) {
@@ -78,7 +78,7 @@ public class ViewFactory implements Factory {
                     try {
                         return (View) constructor.newInstance(context, attrs);
                     } catch (Exception e1) {
-                        BindDesignLog.d(TAG, "onCreateView newInstance failed  = " + e1.toString());
+                        BindDesignLog.e(TAG, "onCreateView newInstance failed  = " + e1.toString());
                     }
                 }
             }
@@ -90,11 +90,9 @@ public class ViewFactory implements Factory {
     public View onCreateView(String name, Context context, AttributeSet attrs) {
         BindDesignLog.d(TAG, "onCreateView name = " + name);
         View view = CreateViewByInflater(name, context, attrs);
-        BindDesignLog.d(TAG, "onCreateView view = " + (view != null ? (view.isInEditMode() ? view.getClass().toString() : view.toString()) : null));
         if (view == null)
             return null;
         int count = attrs.getAttributeCount();
-        BindDesignLog.d(TAG, "onCreateView getAttributeCount = " + count);
         for (int i = 0; i < count; i++) {
             String attrName = attrs.getAttributeName(i);
             String attrValue = attrs.getAttributeValue(BINDING_NAMESPACE, attrName);
@@ -157,7 +155,7 @@ public class ViewFactory implements Factory {
         if (values.length < 2) {
             if (view.isInEditMode())
                 throw new IllegalArgumentException("binding expression illegal, at least specify the property and path");
-            Log.e(TAG, "binding expression illegal, at least specify the property and path");
+            BindDesignLog.e(TAG, "binding expression illegal, at least specify the property and path");
             return;
         }
         Bind bind = new Bind();
@@ -173,8 +171,10 @@ public class ViewFactory implements Factory {
             bd.setPath(bind.path);
             if (bind.converter != null) {
                 // TODO: parseConverter
-                if ("StringToVisibleConverter".equalsIgnoreCase(bind.converter)) {
-                    bd.setValueConverter(new StringToVisibleConverter());
+                if ("TrueToVisibleConverter".equals(bind.converter)) {
+                    bd.setValueConverter(new TrueToVisibleConverter());
+                } else if ("FalseToVisibleConverter".equals(bind.converter)) {
+                    bd.setValueConverter(new FalseToVisibleConverter());
                 }
             }
             DependencyProperty dp = BindablePropertyDeclare.obtain(bind.property, view.getClass());
@@ -212,7 +212,7 @@ public class ViewFactory implements Factory {
         if (vs.length != 2) {
             if (view.isInEditMode())
                 throw new IllegalArgumentException("binding expression illegal");
-            Log.e(TAG, "binding expression illegal");
+            BindDesignLog.e(TAG, "binding expression illegal");
             return;
         }
         String arg1 = vs[0], arg2 = vs[1];
@@ -237,7 +237,7 @@ public class ViewFactory implements Factory {
                 throw new IllegalArgumentException("binding expression must start with '{' and end with '}'");
             } else {
                 // ignore
-                Log.e(TAG, "binding expression must start with '{' and end with '}'");
+                BindDesignLog.e(TAG, "binding expression must start with '{' and end with '}'");
                 return null;
             }
         }

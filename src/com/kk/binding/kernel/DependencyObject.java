@@ -3,8 +3,6 @@
  */
 package com.kk.binding.kernel;
 
-import android.util.Log;
-
 import com.kk.binding.feature.IBindDataProvider;
 import com.kk.binding.listener.ListenerToCommand;
 import com.kk.binding.util.BindDesignLog;
@@ -109,10 +107,7 @@ public class DependencyObject {
         for (java.util.Map.Entry<DependencyProperty, Binding> e : getBindings().entrySet()) {
             if (ViewFactory.BINDING_DATA_CONTEXT.equals(e.getKey().getPropertyName())) {
                 Object value = parseBindValue(dataContext, e.getValue().getPath());
-                IValueConverter converter = e.getValue().getValueConverter();
-                if (converter != null) {
-                    value = converter.converter(value);
-                }
+                value = converterValue(value, e.getValue().getValueConverter());
                 resolvedTargetObject = value;
 
                 return;
@@ -174,9 +169,9 @@ public class DependencyObject {
 
         // parse value
         Class<?> propertyType = dp.getPropertyType();//type = int.class
-        String property = value.toString(); // property = "1"
         Object setValue = null;// value = 1
-        if (propertyType.isPrimitive()) {
+        if (value != null && propertyType.isPrimitive()) {
+            String property = value.toString(); // property = "1"
             if (propertyType == int.class) {
                 setValue = Integer.valueOf(property);
             } else if (propertyType == byte.class) {
@@ -214,7 +209,7 @@ public class DependencyObject {
         try {
             setMethod = originTarget.getClass().getMethod(setMethodName, dp.getPropertyType());
         } catch (Exception e) {
-            Log.e(TAG, "getMethod failed, targetClass = \n" + originTarget.getClass().toString()
+            BindDesignLog.e(TAG, "getMethod failed, targetClass = \n" + originTarget.getClass().toString()
                     + "\n e = " + e.toString());
         }
 
@@ -225,7 +220,7 @@ public class DependencyObject {
                 setMethod.invoke(originTarget, setValue);
                 values.put(dp, value);
             } catch (Exception e) {
-                Log.e(TAG, "invoke failed, targetClass = \n" + originTarget.getClass().toString()
+                BindDesignLog.e(TAG, "invoke failed, targetClass = \n" + originTarget.getClass().toString()
                         + "\n setMethod = " + setMethod
                         + "\n e = " + e.toString());
             }
@@ -244,10 +239,7 @@ public class DependencyObject {
                     + "\n dataContext = " + binding.getDataContext());
 
             Object value = parseBindValue(binding.getDataContext(), binding.getPath());
-            IValueConverter converter = binding.getValueConverter();
-            if (converter != null) {
-                value = converter.converter(value);
-            }
+            value = converterValue(value, binding.getValueConverter());
             setValue(dp, value, binding.getPath());
         }
     }
@@ -305,10 +297,7 @@ public class DependencyObject {
                             if (d != null) {
                                 if (!ViewFactory.BINDING_DATA_CONTEXT.equals(args.getName())) {
                                     Object value = parseBindValue(binding.getDataContext(), args.getName());
-                                    IValueConverter converter = binding.getValueConverter();
-                                    if (converter != null) {
-                                        value = converter.converter(value);
-                                    }
+                                    value = converterValue(value, binding.getValueConverter());
                                     setValue(d, value, args.getName());
                                 }
                             }
@@ -331,6 +320,8 @@ public class DependencyObject {
         }
         if (target == null)
             return null;
+        if (bindExpression.startsWith("$"))
+            return bindExpression.substring(1);
         Object value = target;
         String[] list = bindExpression.split("\\.");
         for (String aList : list) {
@@ -452,6 +443,16 @@ public class DependencyObject {
             }
         }
         return null;
+    }
+
+    public static Object converterValue(Object value, IValueConverter converter) {
+        if (converter == null) return value;
+        try {
+            return converter.converter(value);
+        } catch (Exception e) {
+            BindDesignLog.e(TAG, "converter exception " + e.toString());
+            return null;
+        }
     }
 
 }
