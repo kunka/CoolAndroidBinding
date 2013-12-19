@@ -106,7 +106,7 @@ layout2.xml
     
          <TextView
             binding:binding="{property=text,path=data[0].title}"
-            binding:binding2="{event=onClick,path=redirectUrl,command=urlNavCommand}"
+            binding:binding2="{event=onClick,path=data[0].redirectUrl,command=urlNavCommand}"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content" />
         
@@ -118,7 +118,33 @@ layout2.xml
             android:layout_height="wrap_content" />
      </LinearLayout>
      
+     <com.kk.binding.view.BindableAdapterFrameLayout
+            android:layout_width="wrap_content"
+            binding:dataContext="{data}"
+            binding:childLayout="@layout/list_item"
+            android:layout_height="wrap_content">
+
+            <!--Can be any kind of ViewGroup or ViewPager-->
+            <LinearLayout
+                android:gravity="center_vertical"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent" />
+
+        </com.kk.binding.view.BindableAdapterFrameLayout>
+     
 </com.kk.binding.view.BindableFrameLayout> 
+```
+
+list_item.xml
+
+```xml
+<TextView
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:binding="http://schemas.android.com/apk/res-auto"
+    binding:binding="{property=text,path=title}"
+    binding:binding2="{event=onClick,path=redirectUrl,command=urlNavCommand}"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content" />
 ```
 
 main.json
@@ -147,4 +173,5 @@ Simple bind
 ```
 
 By use our BindableFrameLayout as the root container, you can preview in Android Studio design mode.(Not necessary assuredly)
+Use BindableAdapterFrameLayout as the container of ViewGroup,  you can bind list data and preview in Android Studio design mode.
 
