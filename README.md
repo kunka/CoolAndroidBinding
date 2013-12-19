@@ -10,7 +10,7 @@ Json(Object)+DynamicXml+DesignPreview
  * Preview in design mode(specify dataContext through Object Class name or raw/json)
  * Binding list data to ViewGroup + ViewPager support
 
-## Not Support(TODO)
+## TODO(Not Support)
  * Binding list data to ListView and paging
  * Dynamic xml
 
@@ -30,7 +30,7 @@ layout1.xml(View)
     android:layout_height="wrap_content" />
 ```
 
-data(ViewModel)
+DataClass(ViewModel)
 
 ```java
     public class ViewModel implements INotifyPropertyChanged {
@@ -100,12 +100,24 @@ layout2.xml
     android:layout_height="match_parent"
     design:designData="@raw/main">
     
-     <TextView
-        binding:binding="{property=text,path=data[1].title}"
-        binding:binding2="{event=onClick,path=redirectUrl,command=urlNavCommand}"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content" />
+     <LinearLayout android:layout_width="wrap_content"
+        android:orientation="vertical"
+        android:layout_height="wrap_content" >
     
+         <TextView
+            binding:binding="{property=text,path=data[0].title}"
+            binding:binding2="{event=onClick,path=redirectUrl,command=urlNavCommand}"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content" />
+        
+        <TextView
+            binding:dataContext="{data[1]}"
+            binding:binding="{property=text,path=title}"
+            binding:binding2="{event=onClick,path=redirectUrl,command=urlNavCommand}"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content" />
+     </LinearLayout>
+     
 </com.kk.binding.view.BindableFrameLayout> 
 ```
 
@@ -130,9 +142,9 @@ Simple bind
 
 ```java
     View view = inflate(R.id.layout2);
-    Object object = fromJson() or fromNetwork();
+    Object object = fromRawJson() or fromNetworkJson();
     BindViewUtil.setDataContext(view, object);
 ```
 
-By use our BindableFrameLayout as the root container, you can preview in Android Studio design mode.
+By use our BindableFrameLayout as the root container, you can preview in Android Studio design mode.(Not necessary assuredly)
 
