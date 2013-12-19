@@ -15,7 +15,7 @@ Json(Object)+DynamicXml+DesignPreview
  * Dynamic xml
 
 
-###Simple use
+###Simple usage
 *************************************************************************************
 
 layout1.xml(View)
@@ -85,10 +85,9 @@ Simple bind
     viewModel.setTitle("newTitle");
 ```
 
-###Advance use
+###Advanced Usage
 *************************************************************************************
 layout2.xml
-
 
 ```xml
 <com.kk.binding.view.BindableFrameLayout
@@ -116,6 +115,7 @@ layout2.xml
             binding:binding2="{event=onClick,path=redirectUrl,command=urlNavCommand}"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content" />
+            
      </LinearLayout>
      
      <com.kk.binding.view.BindableAdapterFrameLayout
@@ -138,13 +138,25 @@ layout2.xml
 list_item.xml
 
 ```xml
-<TextView
+<LinearLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:binding="http://schemas.android.com/apk/res-auto"
-    binding:binding="{property=text,path=title}"
-    binding:binding2="{event=onClick,path=redirectUrl,command=urlNavCommand}"
-    android:layout_width="wrap_content"
+    android:gravity="center_vertical"
+    android:layout_width="match_parent"
     android:layout_height="wrap_content" />
+    
+    <ImageView
+        binding:binding="{property=url,path=picUrl}"
+        binding:binding2="{event=onClick,path=redirectUrl,command=urlNavCommand}"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content" />
+            
+    <TextView
+        binding:binding="{property=text,path=title}"
+        binding:binding2="{event=onClick,path=redirectUrl,command=urlNavCommand}"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content" />
+</LinearLayout>
 ```
 
 main.json
@@ -154,13 +166,15 @@ main.json
   "data": [
     {
       "title": "cat",
+      "picUrl": "http://lorempixel.com/100/100",
       "redirectUrl":"http://github.com/"
     },
     {
       "title": "dog",
+      "picUrl": "http://lorempixel.com/100/100",
       "redirectUrl":"http://google.com/"
     }
-    ]
+  ]
 }
 ```
 
@@ -172,6 +186,21 @@ Simple bind
     BindViewUtil.setDataContext(view, object);
 ```
 
+Custom value setter
+
+```java
+BindEngine.setBindValueSetter(new BindValueSetter() {
+            @Override
+            public boolean setValue(final Object target, DependencyProperty dp, final Object value, String path) {
+                if ("url".equals(dp.getPropertyName()) && ImageView.class.isAssignableFrom(dp.getOwnerType())) {
+                    // set image with url. (Strongly Recommended to use the Universal-Image-Loader)
+                    ...
+                }
+            }
+     });
+```         
+
 By use our BindableFrameLayout as the root container, you can preview in Android Studio design mode.(Not necessary assuredly)
+
 Use BindableAdapterFrameLayout as the container of ViewGroup,  you can bind list data and preview in Android Studio design mode.
 
