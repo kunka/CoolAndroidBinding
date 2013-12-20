@@ -6,11 +6,11 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
-import java.util.Arrays;
-import java.util.List;
-
 import com.kk.binding.util.BindDesignLog;
 import com.kk.binding.view.BindViewUtil;
+
+import java.util.Arrays;
+import java.util.List;
 
 /**
  * Created by xj on 13-7-6.
@@ -64,8 +64,8 @@ public class SimpleBindPagerAdapter extends PagerAdapter {
 
     ViewGroup viewPager = null;
 
-    @Override
-    public float getPageWidth(int position) {
+//    @Override
+//    public float getPageWidth(int position) {
 //        BindDesignLog.d(TAG, "getPageWidth position = " + position);
 //        if (viewPager != null && viewPager.getChildCount() > position) {
 //            View child = viewPager.getChildAt(position);
@@ -83,6 +83,6 @@ public class SimpleBindPagerAdapter extends PagerAdapter {
 //            }
 //        }
 //        return super.getPageWidth(position);
-        return 0.8f;
-    }
+//        return 0.8f;
+//    }
 }

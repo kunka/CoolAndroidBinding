@@ -21,7 +21,7 @@ public class UrlNavCommand implements ICommand {
                 try {
                     BindEngine.instance().getContext().startActivity(intent);
                 } catch (Exception e) {
-                    BindDesignLog.e("UrlNavCommand exception ", e.toString());
+                    BindDesignLog.e("UrlNavCommand execute exception ", e.toString());
                 }
             }
         }

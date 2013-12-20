@@ -128,26 +128,6 @@ public class BindViewUtil {
         return view.getTag(R.id.tag_for_binding_data_object);
     }
 
-    public static String getDataInDesignResName(View view) {
-        DependencyObject dpo = BindViewUtil.getDependencyObject(view);
-        for (java.util.Map.Entry<DependencyProperty, Binding> e : dpo.getBindings().entrySet()) {
-            if ("dataInDesignRes".equalsIgnoreCase(e.getKey().getPropertyName())) {
-                return e.getValue().getPath();
-            }
-        }
-        return null;
-    }
-
-    public static String getDataInDesignClassName(View view) {
-        DependencyObject dpo = BindViewUtil.getDependencyObject(view);
-        for (java.util.Map.Entry<DependencyProperty, Binding> e : dpo.getBindings().entrySet()) {
-            if ("dataInDesignClass".equalsIgnoreCase(e.getKey().getPropertyName())) {
-                return e.getValue().getPath();
-            }
-        }
-        return null;
-    }
-
     public static String getDataContextName(View view) {
         DependencyObject dpo = BindViewUtil.getDependencyObject(view);
         for (java.util.Map.Entry<DependencyProperty, Binding> e : dpo.getBindings().entrySet()) {

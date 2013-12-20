@@ -32,10 +32,55 @@ public class BindablePropertyDeclare {
     }
 
     private static void initPropertyHashMapInner() {
-        register("visibility", int.class, View.class, 0);
+        //****************************************************************************************//
+        // View
+        //****************************************************************************************//
+
+        register("clickable", boolean.class, View.class, true);
+        register("selected", boolean.class, View.class, true);
+        register("enable", boolean.class, View.class, true);
+        register("focusable", boolean.class, View.class, true);
+        register("pressed", boolean.class, View.class, false);
+        register("focusable", boolean.class, View.class, true);
+        register("focusable", boolean.class, View.class, true);
+
+//        register("pivotX", float.class, View.class, 0f);
+//        register("pivotY", float.class, View.class, 0f);
+//        register("scaleX", float.class, View.class, 1f);
+//        register("scaleY", float.class, View.class, 1f);
+//        register("translationX", float.class, View.class, 0f);
+//        register("translationY", float.class, View.class, 0f);
+//        register("x", float.class, View.class, 0f);
+//        register("y", float.class, View.class, 0f);
+
+        register("visibility", int.class, View.class, View.VISIBLE);
+        register("alpha", float.class, View.class, 1.0f);
+        register("backgroundColor", int.class, View.class, 0x000000);
+
+        //****************************************************************************************//
+        // TextView
+        //****************************************************************************************//
+
         register("text", CharSequence.class, TextView.class, "");
+        register("textColor", int.class, TextView.class, 0x000000);
+        register("hintTextColor", int.class, TextView.class, 0x000000);
+        register("textSize", float.class, TextView.class, 0f);
+        register("lines", int.class, TextView.class, 0f);
+        register("maxLines", int.class, TextView.class, 0f);
+
+        //****************************************************************************************//
+        // ImageView
+        //****************************************************************************************//
+
         register("url", String.class, ImageView.class, "");
+
+        //****************************************************************************************//
+        // RatingBar
+        //****************************************************************************************//
+
         register("rating", float.class, RatingBar.class, 5);
+
+        // TODO
     }
 
     public static DependencyProperty obtain(String propertyName, Class<?> ownerType) {
