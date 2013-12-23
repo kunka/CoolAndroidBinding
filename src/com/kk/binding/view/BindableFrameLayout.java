@@ -6,6 +6,7 @@ import android.util.AttributeSet;
 import android.widget.FrameLayout;
 
 import com.android.binding.R;
+import com.kk.binding.kernel.BindEngine;
 import com.kk.binding.kernel.Binding;
 import com.kk.binding.kernel.DependencyProperty;
 import com.kk.binding.property.BindablePropertyDeclare;
@@ -23,8 +24,8 @@ public class BindableFrameLayout extends FrameLayout {
     private int designDataResId = 0;
     private int realDataResId = 0;
     private int layoutId = 0;
-    private String dataClass = "";
     private String propertyDeclareClass = "";
+    private String dataClass = "";
     private String dataContext = "";
     private boolean asRootContainer = true;
 
@@ -59,29 +60,7 @@ public class BindableFrameLayout extends FrameLayout {
         asRootContainer = !(layoutId > 0);
         BindDesignLog.setInDesignMode(isInEditMode());
         BindViewUtil.injectInflater(getContext());
-        BindDesignLog.d(TAG, "propertyDeclareClass =  " + propertyDeclareClass);
-        if (!StringUtil.isNullOrEmpty(propertyDeclareClass)) {
-            Class<?> clazz = null;
-            try {
-                clazz = Class.forName(propertyDeclareClass);
-                BindDesignLog.d(TAG, "parse propertyDeclareClass success " + clazz.toString());
-            } catch (ClassNotFoundException e) {
-                if (isInEditMode())
-                    throw new RuntimeException("parse propertyDeclareClass failed " + e.toString());
-                BindDesignLog.e(TAG, "parse propertyDeclareClass failed " + e.toString());
-            }
-            if (clazz != null) {
-                try {
-                    Object instance = clazz.newInstance();
-                    if (instance != null)
-                        BindDesignLog.d(TAG, "create propertyDeclareClass instance success " + instance.toString());
-                } catch (Exception e) {
-                    if (isInEditMode())
-                        throw new RuntimeException("create propertyDeclareClass instance failed " + e.toString());
-                    BindDesignLog.e(TAG, "create propertyDeclareClass instance failed " + e.toString());
-                }
-            }
-        }
+        BindEngine.registerPropertyDeclareClass(propertyDeclareClass);
 
         BindDesignLog.d(TAG, "inflate BindableFrameLayout");
         if (isInEditMode()) {
