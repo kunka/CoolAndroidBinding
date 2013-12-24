@@ -12,9 +12,7 @@ import com.alibaba.fastjson.JSON;
 import com.android.binding.R;
 import com.kk.binding.converter.Converter;
 import com.kk.binding.converter.IConverter;
-import com.kk.binding.kernel.Binding;
 import com.kk.binding.kernel.DependencyObject;
-import com.kk.binding.kernel.DependencyProperty;
 import com.kk.binding.util.BindDesignLog;
 
 import java.lang.reflect.Type;
@@ -57,6 +55,7 @@ public class BindViewUtil {
     public static void injectInflater(Context context) {
         LayoutInflater inflater = LayoutInflater.from(context);
         if (inflater.getFactory() == null) {
+            BindDesignLog.d(TAG, "did injectInflater");
             ViewFactory factory = new ViewFactory(inflater);
             inflater.setFactory(factory);
         }
@@ -126,15 +125,5 @@ public class BindViewUtil {
 
     public static Object getBindDataObject(View view) {
         return view.getTag(R.id.tag_for_binding_data_object);
-    }
-
-    public static String getDataContextName(View view) {
-        DependencyObject dpo = BindViewUtil.getDependencyObject(view);
-        for (java.util.Map.Entry<DependencyProperty, Binding> e : dpo.getBindings().entrySet()) {
-            if ("dataContext".equalsIgnoreCase(e.getKey().getPropertyName())) {
-                return e.getValue().getPath();
-            }
-        }
-        return null;
     }
 }

@@ -8,12 +8,11 @@ import com.kk.binding.listener.ListenerToCommand;
 import com.kk.binding.util.BindDesignLog;
 import com.kk.binding.view.ViewFactory;
 
-import java.lang.reflect.Field;
 import java.lang.reflect.Method;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Map.Entry;
 
 /**
  * @author xuanjue.hk
@@ -22,8 +21,8 @@ import java.util.Map.Entry;
 public class DependencyObject {
     private static final String TAG = "Binding-DependencyObject";
     private HashMap<DependencyProperty, Object> values = new HashMap<DependencyProperty, Object>();
-    private HashMap<DependencyProperty, Binding> bindings = new HashMap<DependencyProperty, Binding>();
-    private HashMap<ListenerToCommand, CommandBinding> cmdBindings = new HashMap<ListenerToCommand, CommandBinding>();
+    private ArrayList<Binding> bindings = new ArrayList<Binding>();
+    private ArrayList<CommandBinding> cmdBindings = new ArrayList<CommandBinding>();
 
     private Object originTarget;
     private Object dataContext;
@@ -39,14 +38,14 @@ public class DependencyObject {
     /**
      * @return the bindings
      */
-    public HashMap<DependencyProperty, Binding> getBindings() {
+    public ArrayList<Binding> getBindings() {
         return bindings;
     }
 
     /**
      * @return the cmdBindings
      */
-    public HashMap<ListenerToCommand, CommandBinding> getCmdBindings() {
+    public ArrayList<CommandBinding> getCmdBindings() {
         return cmdBindings;
     }
 
@@ -84,16 +83,12 @@ public class DependencyObject {
             return true;
 
         // we do the handle here
-        for (java.util.Map.Entry<DependencyProperty, Binding> e : getBindings().entrySet()) {
-            if (!ViewFactory.BINDING_DATA_CONTEXT.equals(e.getKey().getPropertyName())) {
-                e.getValue().setDataContext(targetObject);
-                onDataContextChanged(e.getKey(), e.getValue());
-            }
+        for (Binding binding : bindings) {
+            binding.setDataContext(targetObject);
         }
         // TODO: handle command
-        for (java.util.Map.Entry<ListenerToCommand, CommandBinding> e : getCmdBindings().entrySet()) {
-            e.getValue().setDataContext(targetObject);
-            onCmdDataContextChanged(e.getKey(), e.getValue());
+        for (CommandBinding cmdBinding : cmdBindings) {
+            cmdBinding.setDataContext(targetObject);
         }
         return false;
     }
@@ -104,10 +99,10 @@ public class DependencyObject {
      * @param dataContext
      */
     public void resolveTargetObject(Object dataContext) {
-        for (java.util.Map.Entry<DependencyProperty, Binding> e : getBindings().entrySet()) {
-            if (ViewFactory.BINDING_DATA_CONTEXT.equals(e.getKey().getPropertyName())) {
-                Object value = parseBindValue(dataContext, e.getValue().getPath());
-                value = converterValue(value, e.getValue().getValueConverter());
+        for (Binding binding : bindings) {
+            if (binding.getDependencyProperty() != null && ViewFactory.BINDING_DATA_CONTEXT.equals(binding.getDependencyProperty().getPropertyName())) {
+                Object value = parseBindValue(dataContext, binding.getPath());
+                value = converterValue(value, binding.getValueConverter());
                 resolvedTargetObject = value;
 
                 return;
@@ -227,37 +222,15 @@ public class DependencyObject {
         }
     }
 
-    private void onDataContextChanged(DependencyProperty dp, Binding binding) {
-        if (dp == null || binding == null || binding.getDataContext() == null)
+    public void setCmdBindings(ListenerToCommand ltc, final CommandBinding commandBinding) {
+        if (ltc == null || commandBinding == null)
             return;
-
-        if (!ViewFactory.BINDING_DATA_CONTEXT.equals(dp.getPropertyName())) {
-            BindDesignLog.d(TAG, "OnDataContextChanged: target = \n"
-                    + (originTarget != null ? (BindDesignLog.isInDesignMode() ? originTarget.getClass().toString() : originTarget.toString()) : null)
-                    + "\n propertyName = " + dp.getPropertyName()
-                    + "\n path = " + binding.getPath()
-                    + "\n dataContext = " + binding.getDataContext());
-
-            Object value = parseBindValue(binding.getDataContext(), binding.getPath());
-            value = converterValue(value, binding.getValueConverter());
-            setValue(dp, value, binding.getPath());
-        }
-    }
-
-    private void onCmdDataContextChanged(ListenerToCommand ltc, CommandBinding binding) {
-        if (ltc == null || binding == null || binding.getDataContext() == null)
-            return;
-
-        BindDesignLog.d(TAG, "OnCmdDataContextChanged: target = \n"
+        BindDesignLog.d(TAG, "setCmdBindings: target = \n"
                 + (originTarget != null ? (BindDesignLog.isInDesignMode() ? originTarget.getClass().toString() : originTarget.toString()) : null)
-                + "\n cmd = " + ltc.getCommand()
-                + "\n param = " + ltc.getParam()
-                + "\n cmdParamPath = " + binding.getCommandParamPath()
-                + "\n cmdName = " + binding.getCommandName()
-                + "\n dataContext = " + binding.getDataContext());
-
-        Object value = parseBindValue(binding.getDataContext(), binding.getCommandParamPath());
-        ltc.setParam(value);
+                + "\n commandName = " + commandBinding.getCommandName()
+                + "\n commandParamPath = " + commandBinding.getCommandParamPath());
+        commandBinding.setListenerToCommand(ltc);
+        cmdBindings.add(commandBinding);
     }
 
     /**
@@ -269,44 +242,10 @@ public class DependencyObject {
         BindDesignLog.d(TAG, "setBindings: target = \n"
                 + (originTarget != null ? (BindDesignLog.isInDesignMode() ? originTarget.getClass().toString() : originTarget.toString()) : null)
                 + "\n propertyName = " + dp.getPropertyName()
-                + "\n path = " + binding.getPath()
-                + "\n dataContext = " + binding.getDataContext());
-
-        Binding theOld = bindings.get(dp);
-        if (theOld != null && theOld != binding) {
-            if (theOld instanceof INotifyPropertyChanged) {
-                ((INotifyPropertyChanged) binding.getDataContext()).setPropertyChangedListener(null);
-            }
-        }
-        if (!bindings.containsKey(dp)) {
-            bindings.put(dp, binding);
-            if (binding.getDataContext() instanceof INotifyPropertyChanged) {
-                ((INotifyPropertyChanged) binding.getDataContext()).setPropertyChangedListener(new IPropertyChanged() {
-
-                    @Override
-                    public void propertyChanged(Object sender, PropertyChangedEventArgs args) {
-                        if (binding.getDataContext() != null) {
-                            DependencyProperty d = null;
-                            for (Entry<DependencyProperty, Binding> e : bindings.entrySet()) {
-                                if (e.getValue().getPath().equals(args.getName())) {
-                                    d = e.getKey();
-                                    break;
-                                }
-                            }
-
-                            if (d != null) {
-                                if (!ViewFactory.BINDING_DATA_CONTEXT.equals(args.getName())) {
-                                    Object value = parseBindValue(binding.getDataContext(), args.getName());
-                                    value = converterValue(value, binding.getValueConverter());
-                                    setValue(d, value, args.getName());
-                                }
-                            }
-                        }
-                    }
-                });
-            }
-        }
-        onDataContextChanged(dp, binding);
+                + "\n path = " + binding.getPath());
+        binding.setDependencyProperty(dp);
+        binding.setDependencyObject(this);
+        bindings.add(binding);
     }
 
     public static Object parseBindValue(Object target, String bindExpression) {
@@ -371,26 +310,6 @@ public class DependencyObject {
         return null;
     }
 
-    public void setCmdBindings(ListenerToCommand cmd, final CommandBinding binding) {
-        if (cmd == null || binding == null)
-            return;
-        BindDesignLog.d(TAG, "setCmdBindings: target = \n"
-                + (originTarget != null ? (BindDesignLog.isInDesignMode() ? originTarget.getClass().toString() : originTarget.toString()) : null)
-                + "\n cmd = " + cmd.getCommand()
-                + "\n commandParamPath = " + binding.getCommandParamPath()
-                + "\n dataContext = " + binding.getDataContext());
-
-        CommandBinding theOld = cmdBindings.get(cmd);
-        if (theOld != null && theOld != binding) {
-            // th
-        }
-        cmdBindings.put(cmd, binding);
-        Object param = parseBindValue(binding.getDataContext(), binding.getCommandParamPath());
-        cmd.setParam(param);
-//        Object value = getPublicFieldValueByName(binding.getCommandName(), binding.getTargetObject());
-//        cmd.setCommand((ICommand) value);
-    }
-
     /**
      *
      */
@@ -400,8 +319,6 @@ public class DependencyObject {
     }
 
     /**
-     * 通过反射获取类的私有属性值
-     *
      * @param fieldName
      * @param o
      * @return
@@ -416,33 +333,9 @@ public class DependencyObject {
             Method method = o.getClass().getMethod(getter, new Class[]{});
             return method.invoke(o);
         } catch (Exception e) {
+            BindDesignLog.d(TAG, "getFieldValueByName: e = " + e);
             return null;
         }
-    }
-
-    /**
-     * 通过反射获取对象的公开属性值
-     *
-     * @param fieldName
-     * @param o
-     * @return
-     */
-    public static Object getPublicFieldValueByName(String fieldName, Object o) {
-        if (o == null || fieldName == null) {
-            return null;
-        }
-        Class c = (Class) o.getClass();
-        Field[] fs = c.getDeclaredFields();
-        for (Field f : fs) {
-            f.setAccessible(true);
-            if (f.getName().equalsIgnoreCase(fieldName)) {
-                try {
-                    return f.get(o);
-                } catch (Exception e) {
-                }
-            }
-        }
-        return null;
     }
 
     public static Object converterValue(Object value, IValueConverter converter) {

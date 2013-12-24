@@ -193,10 +193,11 @@ public class ViewFactory implements Factory {
 
             if (ltc != null) {
                 CommandBinding cmdbd = new CommandBinding();
-                // TODO
+                // TODO custom define cmd
                 if ("urlNavCommand".equals(bind.command)) {
                     ltc.setCommand(new UrlNavCommand());
                 }
+                cmdbd.setCommandName(bind.command);
                 cmdbd.setCommandParamPath(bind.path);
                 ltc.registerToView(view);
                 BindViewUtil.getDependencyObject(view).setCmdBindings(ltc, cmdbd);
