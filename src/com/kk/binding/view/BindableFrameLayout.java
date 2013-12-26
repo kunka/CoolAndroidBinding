@@ -119,7 +119,7 @@ public class BindableFrameLayout extends FrameLayout {
 
         if (isInEditMode()) {
             if (designDataResId > 0) {
-                bindDataInDesign();
+                bindDataInDesign(designDataResId);
             }
         } else {
             if (realDataResId > 0) {
@@ -127,7 +127,7 @@ public class BindableFrameLayout extends FrameLayout {
                 post(new Runnable() {
                     @Override
                     public void run() {
-                        bindDataInDesign();
+                        bindDataInDesign(realDataResId);
                     }
                 });
             }
@@ -136,11 +136,11 @@ public class BindableFrameLayout extends FrameLayout {
         // BindDesignLog.throwDesignLog();
     }
 
-    private void bindDataInDesign() {
+    private void bindDataInDesign(int resId) {
         InputStream is = null;
         byte[] data = null;
         try {
-            is = getResources().openRawResource(designDataResId);
+            is = getResources().openRawResource(resId);
             // will fail in design mode
             // is = getResources().getAssets().open(resName);
             data = new byte[is.available()];
