@@ -13,27 +13,14 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.kk.binding.converter;
+package com.kk.binding.kernel;
 
-import java.io.InputStream;
-import java.lang.reflect.Type;
+import com.kk.binding.kernel.DependencyProperty;
 
 /**
- * Created by hk on 13-12-4.
+ * Created by hk on 13-12-12.
  */
-public abstract class Converter implements IConverter {
-    @Override
-    public Object from(byte[] data, Type type) {
-        return null;
-    }
-
-    @Override
-    public Object from(InputStream inputStreams, Type type) {
-        return null;
-    }
-
-    @Override
-    public Object from(String string, Type type) {
-        return null;
-    }
+public interface IBindValueSetter {
+    public boolean setValue(Object target, DependencyProperty dp, Object value, String path);
 }
+
