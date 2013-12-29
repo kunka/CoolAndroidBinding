@@ -93,4 +93,8 @@ public class BindDesignLog {
     public static void setBindLogOpen(boolean open) {
         logOpen = open;
     }
+
+    public static boolean isLogOpen() {
+        return logOpen;
+    }
 }

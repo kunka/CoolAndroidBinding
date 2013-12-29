@@ -19,7 +19,7 @@ import android.database.DataSetObserver;
 import android.util.Log;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ListAdapter;
+import android.widget.BaseAdapter;
 
 /**
  * Created by hk on 13-12-4.
@@ -32,16 +32,19 @@ public class ViewGroupAdapter<T extends ViewGroup> {
     }
 
     private T viewGroup;
-    protected ListAdapter mAdapter;
+    protected BaseAdapter mAdapter;
     protected DataSetObserver mDataSetObserver;
     private OnItemClickListener<T> mOnItemClickListener;
 
     public ViewGroupAdapter(T viewGroup) {
         this.viewGroup = viewGroup;
         mDataSetObserver = new DataSetObserver() {
-            @Override
-            public void onChanged() {
+            @Override public void onChanged() {
                 reloadView();
+            }
+
+            @Override public void onInvalidated() {
+                rebindView();
             }
         };
     }
@@ -54,13 +57,15 @@ public class ViewGroupAdapter<T extends ViewGroup> {
         this.mOnItemClickListener = onItemClickListener;
     }
 
-    public void setAdapter(ListAdapter adapter) {
-        if (mAdapter != null) {
-            mAdapter.unregisterDataSetObserver(mDataSetObserver);
-        }
-        mAdapter = adapter;
-        if (mAdapter != null) {
-            mAdapter.registerDataSetObserver(mDataSetObserver);
+    public void setAdapter(BaseAdapter adapter) {
+        if (mAdapter != adapter) {
+            if (mAdapter != null) {
+                mAdapter.unregisterDataSetObserver(mDataSetObserver);
+            }
+            mAdapter = adapter;
+            if (mAdapter != null) {
+                mAdapter.registerDataSetObserver(mDataSetObserver);
+            }
             if (viewGroup.isInEditMode()) {
                 // cannot called async in design mode
                 mDataSetObserver.onChanged();
@@ -76,16 +81,25 @@ public class ViewGroupAdapter<T extends ViewGroup> {
         }
     }
 
-    public ListAdapter getAdapter() {
+    public BaseAdapter getAdapter() {
         return this.mAdapter;
     }
 
     public void reloadView() {
-        viewGroup.removeAllViews();
-        if (mAdapter == null) return;
+        Log.d(TAG, "reloadView");
+        if (mAdapter == null) {
+            viewGroup.removeAllViews();
+            return;
+        }
         int count = mAdapter.getCount();
+        if (viewGroup.getChildCount() > count) {
+            viewGroup.removeViews(count, viewGroup.getChildCount() - count);
+        }
+        int childCount = viewGroup.getChildCount();
         for (int i = 0; i < count; i++) {
-            final View view = mAdapter.getView(i, null, viewGroup);
+            // reuse view instead of recreate to optimize performance
+            View child = i < childCount ? viewGroup.getChildAt(i) : null;
+            final View view = mAdapter.getView(i, child, viewGroup);
             if (view != null) {
                 final int index = i;
                 view.setOnClickListener(new View.OnClickListener() {
@@ -100,4 +114,35 @@ public class ViewGroupAdapter<T extends ViewGroup> {
             }
         }
     }
+
+    private void rebindView() {
+        Log.d(TAG, "rebindView");
+        if (mAdapter == null) {
+            viewGroup.removeAllViews();
+            return;
+        }
+        int count = mAdapter.getCount();
+        if (viewGroup.getChildCount() > count) {
+            viewGroup.removeViews(count, viewGroup.getChildCount() - count);
+        }
+        int childCount = viewGroup.getChildCount();
+        for (int i = 0; i < count; i++) {
+            // reuse view instead of recreate to optimize performance
+            View child = i < childCount ? viewGroup.getChildAt(i) : null;
+            final View view = mAdapter.getView(i, child, viewGroup);
+            if (view != null) {
+                final int index = i;
+                view.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        Log.d(TAG, "onItemClick index = " + index);
+                        if (mOnItemClickListener != null) {
+                            mOnItemClickListener.onItemClick(viewGroup, view, index);
+                        }
+                    }
+                });
+            }
+        }
+    }
+
 }

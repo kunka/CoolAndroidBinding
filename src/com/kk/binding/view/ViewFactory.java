@@ -21,9 +21,10 @@ import android.view.LayoutInflater;
 import android.view.LayoutInflater.Factory;
 import android.view.View;
 import android.widget.AdapterView;
-
 import com.kk.binding.command.UrlNavCommand;
 import com.kk.binding.converter.FalseToVisibleConverter;
+import com.kk.binding.converter.NotNullToVisibleConverter;
+import com.kk.binding.converter.NullToVisibleConverter;
 import com.kk.binding.converter.TrueToVisibleConverter;
 import com.kk.binding.kernel.Binding;
 import com.kk.binding.kernel.CommandBinding;
@@ -190,6 +191,10 @@ public class ViewFactory implements Factory {
                     bd.setValueConverter(new TrueToVisibleConverter());
                 } else if ("FalseToVisibleConverter".equals(bind.converter)) {
                     bd.setValueConverter(new FalseToVisibleConverter());
+                } else if ("NullToVisibleConverter".equals(bind.converter)) {
+                    bd.setValueConverter(new NullToVisibleConverter());
+                } else if ("NotNullToVisibleConverter".equals(bind.converter)) {
+                    bd.setValueConverter(new NotNullToVisibleConverter());
                 }
             }
             DependencyProperty dp = BindablePropertyDeclare.obtain(bind.property, view.getClass());

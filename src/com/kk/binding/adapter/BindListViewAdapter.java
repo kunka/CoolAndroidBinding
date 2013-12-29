@@ -13,9 +13,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package com.kk.binding.adapter;
 
-import android.view.ViewGroup;
+import android.widget.ListView;
 import com.kk.binding.kernel.DependencyObject;
 import com.kk.binding.kernel.OnDataContextChanged;
 import com.kk.binding.kernel.PropertyChangedEventArgs;
@@ -26,34 +27,34 @@ import java.util.Arrays;
 import java.util.List;
 
 /**
- * Created by hk on 13-12-5.
+ * Created by hk on 13-12-28.
  */
-public class BindViewGroupAdapter<T extends ViewGroup> extends ViewGroupAdapter {
+public class BindListViewAdapter<T extends ListView> extends ListViewAdapter {
     private int mResId;
 
-    public BindViewGroupAdapter(T viewGroup, int resId) {
-        super(viewGroup);
+    public BindListViewAdapter(T viewPager, int resId) {
+        super(viewPager);
         mResId = resId;
-        final DependencyObject dp = BindViewUtil.getDependencyObject(viewGroup);
+        final DependencyObject dp = BindViewUtil.getDependencyObject(viewPager);
         dp.setOnDataContextTargetChangedListener(new OnDataContextChanged() {
             @Override
             public boolean onDataContextChanged(DependencyObject dpo, PropertyChangedEventArgs args) {
-                BindDesignLog.d("Binding-BindViewGroupAdapter", "setDataContextTargetChanged "
-                        + "\n viewGroup = " + (getViewGroup().isInEditMode() ? getViewGroup().getClass().toString() : getViewGroup().toString())
+                BindDesignLog.d("Binding-BindListViewAdapter", "setDataContextTargetChanged "
+                        + "\n listView = " + (getListView().isInEditMode() ? getListView().getClass().toString() : getListView().toString())
                         + "\n oldValue = " + (args.getOldValue() != null ? args.getOldValue().toString() : null)
                         + "\n newValue = " + (args.getNewValue() != null ? args.getNewValue().toString() : null));
 
                 Object obj = args.getNewValue();
                 if (obj instanceof List<?>) {
                     if (getAdapter() == null) {
-                        setAdapter(new SimpleBindListAdapter(getViewGroup().getContext(), mResId, (List<Object>) obj));
+                        setAdapter(new SimpleBindListAdapter(getListView().getContext(), mResId, (List<Object>) obj));
                     } else {
                         SimpleBindListAdapter adapter = (SimpleBindListAdapter) getAdapter();
                         adapter.setData((List<Object>) obj);
                     }
                 } else if (obj instanceof Object[]) {
                     if (getAdapter() == null) {
-                        setAdapter(new SimpleBindListAdapter(getViewGroup().getContext(), mResId, ((Object[]) obj)));
+                        setAdapter(new SimpleBindListAdapter(getListView().getContext(), mResId, ((Object[]) obj)));
                     } else {
                         SimpleBindListAdapter adapter = (SimpleBindListAdapter) getAdapter();
                         adapter.setData(Arrays.asList(obj));

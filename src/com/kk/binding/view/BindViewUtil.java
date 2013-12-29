@@ -19,7 +19,6 @@ import android.content.Context;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-
 import com.alibaba.fastjson.JSON;
 import com.android.binding.R;
 import com.kk.binding.converter.Converter;
@@ -34,7 +33,7 @@ import java.lang.reflect.Type;
  * @date 2013-2-26
  */
 public class BindViewUtil {
-    private static final String TAG = "Binding";
+    private static final String TAG = "BindViewUtil";
     private static Converter converter;
 
     private static Converter defaultConverter = new Converter() {
@@ -132,7 +131,18 @@ public class BindViewUtil {
     }
 
     public static void setDataContext(final View view, final Object dataContext) {
+        long start = 0;
+        if (BindDesignLog.isLogOpen()) {
+            start = System.nanoTime();
+        }
+
         setDataContext(view, dataContext, 0);
+
+        if (BindDesignLog.isLogOpen()) {
+            long end = System.nanoTime();
+            long delta = (end - start) / 1000000;
+            BindDesignLog.w(TAG, "setDataContext for view (" + view.getClass().getSimpleName() + "), time(ms) = " + delta);
+        }
     }
 
     public static Object getBindDataObject(View view) {

@@ -19,7 +19,6 @@ import android.view.View;
 import android.widget.ImageView;
 import android.widget.RatingBar;
 import android.widget.TextView;
-
 import com.kk.binding.kernel.DependencyProperty;
 import com.kk.binding.util.BindDesignLog;
 import com.kk.binding.view.ViewFactory;
@@ -155,4 +154,7 @@ public class BindablePropertyDeclare {
         }
         return dp;
     }
+
+    // TODO
+    // register BindValueSetter filter to optimize performance
 }
