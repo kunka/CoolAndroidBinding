@@ -85,7 +85,6 @@ public class Binding {
             if (this.dataContext instanceof INotifyPropertyChanged) {
                 ((INotifyPropertyChanged) this.dataContext).setPropertyChangedListener(null);
             }
-
             this.dataContext = dataContext;
             // register new
             if (this.dataContext instanceof INotifyPropertyChanged) {
@@ -94,17 +93,19 @@ public class Binding {
                     @Override
                     public void propertyChanged(Object sender, PropertyChangedEventArgs args) {
                         if (StringUtil.compare(path, args.getName())) {
-                            updateValue();
+                            updateValue(false);
+                        } else if (ViewFactory.BINDING_NAME.equals(args.getName())) {
+                            updateValue(true);
                         }
                     }
                 });
             }
 
-            updateValue();
+            updateValue(false);
         }
     }
 
-    private void updateValue() {
+    private void updateValue(boolean updateDataContext) {
         if (dp == null || dpo == null)
             return;
 
@@ -117,6 +118,15 @@ public class Binding {
             Object value = DependencyObject.parseBindValue(dataContext, path);
             value = DependencyObject.converterValue(value, valueConverter);
             dpo.setValue(dp, value, path);
+        } else if (updateDataContext) {
+            BindDesignLog.d(TAG, "updateValue: target = \n"
+                    + "\n propertyName = " + dp.getPropertyName()
+                    + "\n path = " + path
+                    + "\n dataContext = " + dataContext);
+
+            Object value = DependencyObject.parseBindValue(dataContext, path);
+            value = DependencyObject.converterValue(value, valueConverter);
+            dpo.setDataContext(value);
         }
-    }
+     }
 }

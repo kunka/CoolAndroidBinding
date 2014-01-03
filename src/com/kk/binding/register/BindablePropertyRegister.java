@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.kk.binding.property;
+package com.kk.binding.register;
 
 import android.view.View;
 import android.widget.ImageView;
@@ -30,8 +30,8 @@ import java.util.Map;
  * @author xuanjue.hk
  * @date 2013-2-28
  */
-public class BindablePropertyDeclare {
-    private static final String TAG = "Binding-BindablePropertyDeclare";
+public class BindablePropertyRegister {
+    private static final String TAG = "Binding-BindablePropertyRegister";
     private static HashMap<Class<?>, HashMap<String, DependencyProperty>> propertyHashMapOfClass;
 
     private static HashMap<Class<?>, HashMap<String, DependencyProperty>> getPropertyHashMap() {

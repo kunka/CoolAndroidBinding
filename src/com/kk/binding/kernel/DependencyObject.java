@@ -80,7 +80,7 @@ public class DependencyObject {
         resolveTargetObject(dataContext);
         Object targetObject = getResolvedTargetObject();
         boolean handled = false;
-        if (targetObject != oldTargetObject && dataContextTargetChangedListener != null) {
+        if (/*targetObject != oldTargetObject &&*/ dataContextTargetChangedListener != null) {
             BindDesignLog.d(TAG, "dataContext Changed: \ntarget= "
                     + (originTarget != null ? (BindDesignLog.isInDesignMode() ? originTarget.getClass().toString() : originTarget.toString()) : null)
                     + "\n oldValue= " + (oldTargetObject != null ? oldTargetObject.toString() : null)
@@ -199,7 +199,11 @@ public class DependencyObject {
                     throw new RuntimeException("Wrong base type in " + propertyType.toString());
             }
         } else {
-            setValue = value;
+            if (value != null && propertyType == CharSequence.class) {
+                setValue = value.toString();
+            } else {
+                setValue = value;
+            }
         }
 
         BindDesignLog.d(TAG, "setValue: target = \n"
@@ -289,7 +293,7 @@ public class DependencyObject {
     public static Object parseArray(Object target, String expression) {
         int length = expression.length();
         int last = expression.lastIndexOf("[");
-        if (last > 0 && length - last > 1) {
+        if (last >= 0 && length - last > 1) {
             String indexStr = expression.substring(last + 1, length - 1);
             int index = 0;
             try {
@@ -298,7 +302,11 @@ public class DependencyObject {
                 index = -1;
             }
             if (index >= 0) {
-                target = parseBindValue(target, expression.substring(0, last));
+                if (last == 0)
+                    ;
+                else
+                    target = parseBindValue(target, expression.substring(0, last));
+
                 if (target == null)
                     return null;
                 if (target instanceof List<?>) {

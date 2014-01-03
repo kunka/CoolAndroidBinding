@@ -21,7 +21,6 @@ import android.view.LayoutInflater;
 import android.view.LayoutInflater.Factory;
 import android.view.View;
 import android.widget.AdapterView;
-import com.kk.binding.command.UrlNavCommand;
 import com.kk.binding.converter.FalseToVisibleConverter;
 import com.kk.binding.converter.NotNullToVisibleConverter;
 import com.kk.binding.converter.NullToVisibleConverter;
@@ -29,10 +28,13 @@ import com.kk.binding.converter.TrueToVisibleConverter;
 import com.kk.binding.kernel.Binding;
 import com.kk.binding.kernel.CommandBinding;
 import com.kk.binding.kernel.DependencyProperty;
+import com.kk.binding.kernel.ICommand;
 import com.kk.binding.listener.ListenerToCommand;
 import com.kk.binding.listener.OnClickListenerImp;
+import com.kk.binding.listener.OnFocusChangeListenerImp;
 import com.kk.binding.listener.OnItemClickListenerImp;
-import com.kk.binding.property.BindablePropertyDeclare;
+import com.kk.binding.register.BindablePropertyRegister;
+import com.kk.binding.register.CommandRegister;
 import com.kk.binding.util.BindDesignLog;
 
 import java.lang.reflect.Constructor;
@@ -154,7 +156,7 @@ public class ViewFactory implements Factory {
         if (attrValue == null) return;
         Binding bd = new Binding();
         bd.setPath(attrValue);
-        DependencyProperty dp = BindablePropertyDeclare.obtain(BINDING_DATA_CONTEXT, view.getClass());
+        DependencyProperty dp = BindablePropertyRegister.obtain(BINDING_DATA_CONTEXT, view.getClass());
         BindViewUtil.getDependencyObject(view).setBindings(dp, bd);
     }
 
@@ -197,26 +199,37 @@ public class ViewFactory implements Factory {
                     bd.setValueConverter(new NotNullToVisibleConverter());
                 }
             }
-            DependencyProperty dp = BindablePropertyDeclare.obtain(bind.property, view.getClass());
+            DependencyProperty dp = BindablePropertyRegister.obtain(bind.property, view.getClass());
             BindViewUtil.getDependencyObject(view).setBindings(dp, bd);
         }
 
         if (bind.event != null && bind.command != null) {
             ListenerToCommand ltc = null;
             // TODO: parseCommand
-            if ("onClick".equals(bind.event)) {
+            if ("OnClick".equals(bind.event)) {
                 ltc = new OnClickListenerImp();
-            } else if ("onItemClick".equals(bind.event)) {
+            } else if ("OnItemClick".equals(bind.event)) {
                 ltc = new OnItemClickListenerImp();
+            } else if ("OnFocusChange".equals(bind.event)) {
+                ltc = new OnFocusChangeListenerImp();
             } else {
             }
 
             if (ltc != null) {
                 CommandBinding cmdbd = new CommandBinding();
                 // TODO custom define cmd
-                if ("urlNavCommand".equals(bind.command)) {
-                    ltc.setCommand(new UrlNavCommand());
+                Class<?> commandType = CommandRegister.getCommandsHashMap().get(bind.command);
+                if (commandType != null) {
+                    try {
+                        ltc.setCommand((ICommand) commandType.newInstance());
+                    } catch (Exception e) {
+                        BindDesignLog.e(TAG, "create command failed. commandName = " + bind.command
+                                + " commandType = " + commandType + " e = " + e.toString());
+                    }
                 }
+//                if ("urlNavCommand".equals(bind.command)) {
+//                    ltc.setCommand(new UrlNavCommand());
+//                }
                 cmdbd.setCommandName(bind.command);
                 cmdbd.setCommandParamPath(bind.path);
                 ltc.registerToView(view);

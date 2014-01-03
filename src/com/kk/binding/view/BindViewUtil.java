@@ -105,7 +105,7 @@ public class BindViewUtil {
     }
 
     private static void setDataContext(final View view, final Object dataContext, int level) {
-        if (view == null || getBindDataObject(view) == dataContext)
+        if (view == null) //|| getBindDataObject(view) == dataContext)
             return;
         // view.toString() will throw exception when you set a view's id in xml
         BindDesignLog.d(TAG, "setDataContext : view(" + level + ") = \n"
