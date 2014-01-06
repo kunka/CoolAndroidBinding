@@ -1,0 +1,44 @@
+{
+    "data": {
+        "head": "Hot sports",
+        "columnOrRowNum": 3,
+        "content": [
+            {
+                "title": "sport",
+                "subTitle": "some sport",
+                "picUrl": "http://lorempixel.com/400/200/sports/1",
+                "aspectRatio": 1.5,
+                "link": "local://kkdemo.com/another"
+            },
+            {
+                "picUrl": "http://lorempixel.com/200/200/sports/2",
+                "aspectRatio": 1,
+                "link": "http://github.com"
+            },
+            {
+                "picUrl": "http://lorempixel.com/200/200/sports/3",
+                "rating": 3.5,
+                "aspectRatio": 1.2,
+                "link": "http://lorempixel.com"
+            },
+            {
+                "picUrl": "http://lorempixel.com/200/200/sports/4"
+            },
+            {
+                "picUrl": "http://lorempixel.com/200/200/sports/5"
+            },
+            {
+                "picUrl": "http://lorempixel.com/200/200/sports/6"
+            },
+            {
+                "picUrl": "http://lorempixel.com/200/200/sports/7"
+            },
+            {
+                "picUrl": "http://lorempixel.com/200/200/sports/8"
+            },
+            {
+                "picUrl": "http://lorempixel.com/200/200/sports/9"
+            }
+        ]
+    }
+}

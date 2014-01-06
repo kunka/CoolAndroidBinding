@@ -132,7 +132,7 @@ public class BindableFrameLayout extends FrameLayout {
                 });
             }
         }
-        // print log in design log
+        // print log in design mode
         // BindDesignLog.throwDesignLog();
     }
 

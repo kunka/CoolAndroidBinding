@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="utf-8"?>
+<FrameLayout
+    android:layout_width="fill_parent"
+    android:layout_height="wrap_content"
+    xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <LinearLayout xmlns:binding="http://schemas.android.com/apk/res-auto"
+        xmlns:app="http://schemas.android.com/apk/res/com.kk.example.BindingExample"
+        android:background="@drawable/list_item_bg"
+        android:layout_width="fill_parent"
+        android:clickable="true"
+        binding:binding="{event=OnClick,path=link,command=urlNavCommand}"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:paddingLeft="8dp"
+        android:paddingRight="8dp">
+
+        <com.kk.control.RatioImageView
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
+            app:aspectRatio="1"
+            android:scaleType="centerCrop"
+            binding:binding="{property=aspectRatio,path=aspectRatio}"
+            binding:binding2="{property=url,path=picUrl}"
+            android:src="@drawable/g110x110" />
+
+        <TextView
+            android:layout_marginTop="5dp"
+            android:text="Large title"
+            binding:binding="{property=text,path=title}"
+            android:textColor="#555555"
+            android:textSize="18dp"
+            android:lines="1"
+            android:ellipsize="end"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content" />
+
+        <TextView
+            android:layout_marginTop="3dp"
+            android:maxLines="3"
+            android:ellipsize="end"
+            android:textSize="14dp"
+            android:textColor="#999999"
+            android:layout_marginBottom="4dp"
+            binding:binding="{property=text,path=subTitle}"
+            android:text="Sub title, the describe of this item"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content" />
+    </LinearLayout>
+</FrameLayout>

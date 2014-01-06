@@ -1,0 +1,50 @@
+<com.kk.binding.view.BindableFrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    app:designData="@raw/main"
+    app:realData="@raw/main"
+    app:propertyDeclareClass="com.kk.binding.PropertyDeclare"
+    xmlns:binding="http://schemas.android.com/apk/res-auto"
+    xmlns:app="http://schemas.android.com/apk/res/com.kk.example.BindingExample">
+
+    <ScrollView
+        android:paddingLeft="12dp"
+        android:paddingRight="20dp"
+        android:paddingTop="12dp"
+        android:layout_width="fill_parent"
+        android:layout_height="fill_parent">
+
+        <LinearLayout
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical">
+
+            <TextView
+                binding:binding="{property=text,path=data.head}"
+                android:text="title"
+                android:enabled="false"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content" />
+
+            <com.kk.binding.view.BindableAdapterFrameLayout
+                android:layout_marginTop="14dp"
+                android:layout_width="fill_parent"
+                binding:dataContext="{data.content}"
+                binding:childLayout="@layout/activity_main_waterfall_item_vertical"
+                android:layout_height="wrap_content">
+
+                <com.kk.control.WaterFallLayout xmlns:binding="http://schemas.android.com/apk/res-auto"
+                    android:layout_width="fill_parent"
+                    android:id="@+id/waterfall"
+                    app:orientation="vertical"
+                    app:horizontalPadding="4dp"
+                    app:columnOrRowNum="3"
+                    app:divideSpace="true"
+                    app:verticalPadding="4dp"
+                    android:layout_height="wrap_content" />
+            </com.kk.binding.view.BindableAdapterFrameLayout>
+        </LinearLayout>
+
+    </ScrollView>
+
+</com.kk.binding.view.BindableFrameLayout>
