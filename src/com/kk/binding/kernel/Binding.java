@@ -24,7 +24,7 @@ import com.kk.binding.view.ViewFactory;
  * @date 2013-2-25
  */
 public class Binding {
-    private static final String TAG = "Binding";
+    private static final String TAG = "Binding-Binding";
     private String path;
     private DependencyProperty dp;
     private DependencyObject dpo;
@@ -94,7 +94,7 @@ public class Binding {
                     public void propertyChanged(Object sender, PropertyChangedEventArgs args) {
                         if (StringUtil.compare(path, args.getName())) {
                             updateValue(false);
-                        } else if (ViewFactory.BINDING_NAME.equals(args.getName())) {
+                        } else if (ViewFactory.BINDING_DATA_CONTEXT.equals(args.getName())) {
                             updateValue(true);
                         }
                     }

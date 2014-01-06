@@ -19,12 +19,11 @@ import android.content.Context;
 import android.content.res.TypedArray;
 import android.util.AttributeSet;
 import android.widget.FrameLayout;
-
 import com.android.binding.R;
 import com.kk.binding.kernel.BindEngine;
 import com.kk.binding.kernel.Binding;
 import com.kk.binding.kernel.DependencyProperty;
-import com.kk.binding.register.BindablePropertyRegister;
+import com.kk.binding.register.PropertyRegister;
 import com.kk.binding.util.BindDesignLog;
 import com.kk.binding.util.StringUtil;
 
@@ -45,13 +44,11 @@ public class BindableFrameLayout extends FrameLayout {
     private boolean asRootContainer = true;
 
     public BindableFrameLayout(Context context) {
-        super(context);
-        init(null);
+        this(context, null, 0);
     }
 
     public BindableFrameLayout(Context context, AttributeSet attrs) {
-        super(context, attrs);
-        init(attrs);
+        this(context, attrs, 0);
     }
 
     public BindableFrameLayout(Context context, AttributeSet attrs, int defStyle) {
@@ -172,7 +169,7 @@ public class BindableFrameLayout extends FrameLayout {
             String attrValue = ViewFactory.parseBindingSyntactic(this, dataContext);
             if (attrValue != null) {
                 bd.setPath(ViewFactory.parseBindingSyntactic(this, dataContext));
-                DependencyProperty dp = BindablePropertyRegister.obtain(ViewFactory.BINDING_DATA_CONTEXT, Object.class);
+                DependencyProperty dp = PropertyRegister.obtain(ViewFactory.BINDING_DATA_CONTEXT, Object.class);
                 BindViewUtil.getDependencyObject(this).setBindings(dp, bd);
             }
         }

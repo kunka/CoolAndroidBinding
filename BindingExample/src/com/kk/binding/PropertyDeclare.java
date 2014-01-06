@@ -16,7 +16,7 @@
 
 package com.kk.binding;
 
-import com.kk.binding.register.BindablePropertyRegister;
+import com.kk.binding.register.PropertyRegister;
 import com.kk.control.RatioImageView;
 import com.kk.control.WaterFallLayout;
 
@@ -27,15 +27,15 @@ public class PropertyDeclare {
 
     public PropertyDeclare() {
         // RatioImageView
-        BindablePropertyRegister.register("aspectRatio", float.class, RatioImageView.class, "1");
-        BindablePropertyRegister.register("adjustWidth", boolean.class, RatioImageView.class, "false");
+        PropertyRegister.register("aspectRatio", float.class, RatioImageView.class, "1");
+        PropertyRegister.register("adjustWidth", boolean.class, RatioImageView.class, "false");
 
         // WaterFallLayout
-        BindablePropertyRegister.register("orientation", String.class, WaterFallLayout.class, "vertical");
-        BindablePropertyRegister.register("horizontalPadding", float.class, WaterFallLayout.class, "0");
-        BindablePropertyRegister.register("verticalPadding", float.class, WaterFallLayout.class, "0");
-        BindablePropertyRegister.register("fixedWidthOrHeight", float.class, WaterFallLayout.class, "0");
-        BindablePropertyRegister.register("columnOrRowNum", int.class, WaterFallLayout.class, "1");
-        BindablePropertyRegister.register("divideSpace", boolean.class, WaterFallLayout.class, "false");
+        PropertyRegister.register("orientation", String.class, WaterFallLayout.class, "vertical");
+        PropertyRegister.register("horizontalPadding", float.class, WaterFallLayout.class, "0");
+        PropertyRegister.register("verticalPadding", float.class, WaterFallLayout.class, "0");
+        PropertyRegister.register("fixedWidthOrHeight", float.class, WaterFallLayout.class, "0");
+        PropertyRegister.register("columnOrRowNum", int.class, WaterFallLayout.class, "1");
+        PropertyRegister.register("divideSpace", boolean.class, WaterFallLayout.class, "false");
     }
 }

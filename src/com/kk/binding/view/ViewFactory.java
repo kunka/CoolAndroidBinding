@@ -20,21 +20,12 @@ import android.util.AttributeSet;
 import android.view.LayoutInflater;
 import android.view.LayoutInflater.Factory;
 import android.view.View;
-import android.widget.AdapterView;
-import com.kk.binding.converter.FalseToVisibleConverter;
-import com.kk.binding.converter.NotNullToVisibleConverter;
-import com.kk.binding.converter.NullToVisibleConverter;
-import com.kk.binding.converter.TrueToVisibleConverter;
-import com.kk.binding.kernel.Binding;
-import com.kk.binding.kernel.CommandBinding;
-import com.kk.binding.kernel.DependencyProperty;
-import com.kk.binding.kernel.ICommand;
+import com.kk.binding.kernel.*;
 import com.kk.binding.listener.ListenerToCommand;
-import com.kk.binding.listener.OnClickListenerImp;
-import com.kk.binding.listener.OnFocusChangeListenerImp;
-import com.kk.binding.listener.OnItemClickListenerImp;
-import com.kk.binding.register.BindablePropertyRegister;
 import com.kk.binding.register.CommandRegister;
+import com.kk.binding.register.ConverterRegister;
+import com.kk.binding.register.ListenerImpRegister;
+import com.kk.binding.register.PropertyRegister;
 import com.kk.binding.util.BindDesignLog;
 
 import java.lang.reflect.Constructor;
@@ -44,10 +35,18 @@ import java.lang.reflect.Constructor;
  * @date 2013-2-26
  */
 public class ViewFactory implements Factory {
+    class BindMeta {
+        String path;
+        String property;
+        String converter;
+        String command;
+        String event;
+    }
+
     public static String TAG = "Binding-ViewFactory";
     // public static final String BINDING_NAMESPACE = "http://schemas.android.com/apk/res/binding";
-    public static String BINDING_NAMESPACE = "http://schemas.android.com/apk/res-auto";
-    public static final String BINDING_NAME = "binding";
+    public static final String BINDING_NAMESPACE = "http://schemas.android.com/apk/res-auto";
+    public static final String BINDING_NAME_PREFIX = "binding";
     public static final String BINDING_DATA_CONTEXT = "dataContext";
     public static final String BINDING_PATH = "path";
     public static final String BINDING_PROPERTY = "property";
@@ -60,7 +59,29 @@ public class ViewFactory implements Factory {
         this.mInflater = inflater;
     }
 
-    protected View CreateViewByInflater(String name, Context context, AttributeSet attrs) {
+    @Override
+    public View onCreateView(String name, Context context, AttributeSet attrs) {
+        BindDesignLog.d(TAG, "onCreateView name = " + name);
+        View view = createViewByInflater(name, context, attrs);
+        if (view == null)
+            return null;
+        int count = attrs.getAttributeCount();
+        for (int i = 0; i < count; i++) {
+            String attrName = attrs.getAttributeName(i);
+            String attrValue = attrs.getAttributeValue(BINDING_NAMESPACE, attrName);
+            if (attrValue != null && attrName != null) {
+                BindDesignLog.d(TAG, "onCreateView parseBindingAttribute: attrName = " + attrName + " attrValue = " + attrValue);
+                if (attrName.startsWith(BINDING_NAME_PREFIX)) {
+                    parseAttribute(view, attrName, attrValue);
+                } else if (attrName.equals(BINDING_DATA_CONTEXT)) {
+                    parseAttributeDataContext(view, attrName, attrValue);
+                }
+            }
+        }
+        return view;
+    }
+
+    protected View createViewByInflater(String name, Context context, AttributeSet attrs) {
         String viewFullName = "";
         try {
             if (name.equals("View") || name.equals("ViewGroup") || name.equals("ViewStub"))
@@ -73,7 +94,7 @@ public class ViewFactory implements Factory {
             BindDesignLog.d(TAG, "onCreateView viewFullName = " + viewFullName);
             return mInflater.createView(viewFullName, null, attrs);
         } catch (Exception e) {
-            // design mode cannot find custom class, inflate will failed, shit!
+            // design mode cannot find custom class?! inflate will failed, shit! :(
             // so we use the class name to create instance.
             BindDesignLog.e(TAG, "onCreateView exception = " + e.toString());
             Class<?> clazz = null;
@@ -104,71 +125,23 @@ public class ViewFactory implements Factory {
         }
     }
 
-    @Override
-    public View onCreateView(String name, Context context, AttributeSet attrs) {
-        BindDesignLog.d(TAG, "onCreateView name = " + name);
-        View view = CreateViewByInflater(name, context, attrs);
-        if (view == null)
-            return null;
-        int count = attrs.getAttributeCount();
-        for (int i = 0; i < count; i++) {
-            String attrName = attrs.getAttributeName(i);
-            String attrValue = attrs.getAttributeValue(BINDING_NAMESPACE, attrName);
-            if (attrValue != null && attrName != null) {
-                BindDesignLog.d(TAG, "onCreateView parseBindingAttribute: attrName = " + attrName + " attrValue = " + attrValue);
-                if (attrName.startsWith(BINDING_NAME)) {
-                    parseAttribute(view, attrName, attrValue);
-                } else if (attrName.equals(BINDING_DATA_CONTEXT)) {
-                    parseAttributeDataContext(view, attrName, attrValue);
-                }
-            }
-        }
-        return view;
-    }
-
-    /**
-     * TODO
-     * begin with "on"
-     */
-    public void parseCommand(View view, String attrName, String attrValue) {
-        ListenerToCommand ltc = null;
-        if (view instanceof View) {
-            if ("onClick".equalsIgnoreCase(attrName)) {
-                ltc = new OnClickListenerImp();
-            }
-        } else if (view instanceof AdapterView<?>) {
-            if ("onItemClick".equalsIgnoreCase(attrName)) {
-                ltc = new OnItemClickListenerImp();
-            }
-        }
-        if (ltc != null) {
-            CommandBinding cmdb = new CommandBinding();
-            cmdb.setCommandName(attrValue);
-            ltc.registerToView(view);
-            BindViewUtil.getDependencyObject(view).setCmdBindings(ltc, cmdb);
-        }
-    }
-
     private void parseAttributeDataContext(View view, String attrName, String attrValue) {
-        // remove '{' and '}'
-        // "{bindValue}" --> "bindValue"
         attrValue = parseBindingSyntactic(view, attrValue);
         if (attrValue == null) return;
         Binding bd = new Binding();
         bd.setPath(attrValue);
-        DependencyProperty dp = BindablePropertyRegister.obtain(BINDING_DATA_CONTEXT, view.getClass());
+        DependencyProperty dp = PropertyRegister.obtain(BINDING_DATA_CONTEXT, view.getClass());
         BindViewUtil.getDependencyObject(view).setBindings(dp, bd);
     }
 
     public void parseAttribute(View view, String attrName, String attrValue) {
-        // remove '{' and '}'
-        // "{bindValue}" --> "bindValue"
         attrValue = parseBindingSyntactic(view, attrValue);
-        if (attrValue == null) return;
+        if (attrValue == null)
+            return;
 
-        // "path=data.bindValue,property=pro,converter=stringToVisibleConverter",command="cmd",event="onClick"
+        // "path=data.bindValue,property=pro,converter=stringToVisibleConverter,command=cmd,event=onClick,...
         // -->
-        // path=data.bindValue | property=pro | converter=stringToVisibleConverter
+        // path=data.bindValue | property=pro | converter=stringToVisibleConverter | ...
         String[] values = attrValue.split(",");
         if (values.length < 2) {
             if (view.isInEditMode())
@@ -176,60 +149,64 @@ public class ViewFactory implements Factory {
             BindDesignLog.e(TAG, "binding expression illegal, at least specify the property and path");
             return;
         }
-        Bind bind = new Bind();
+        BindMeta bind = new BindMeta();
         for (String v : values) {
             parseBinding(bind, view, v);
         }
         doBind(view, bind);
     }
 
-    private void doBind(View view, Bind bind) {
+    private void doBind(View view, BindMeta bind) {
         if (bind.property != null && bind.path != null) {
             Binding bd = new Binding();
             bd.setPath(bind.path);
             if (bind.converter != null) {
-                // TODO: parseConverter
-                if ("TrueToVisibleConverter".equals(bind.converter)) {
-                    bd.setValueConverter(new TrueToVisibleConverter());
-                } else if ("FalseToVisibleConverter".equals(bind.converter)) {
-                    bd.setValueConverter(new FalseToVisibleConverter());
-                } else if ("NullToVisibleConverter".equals(bind.converter)) {
-                    bd.setValueConverter(new NullToVisibleConverter());
-                } else if ("NotNullToVisibleConverter".equals(bind.converter)) {
-                    bd.setValueConverter(new NotNullToVisibleConverter());
+                // parseConverter
+                Class<? extends IValueConverter> converterType = ConverterRegister.getConverters().get(bind.converter);
+                if (converterType != null) {
+                    try {
+                        bd.setValueConverter(converterType.newInstance());
+                    } catch (Exception e) {
+                        BindDesignLog.e(TAG, "create converter failed. converterName = " + bind.converter
+                                + " converterType = " + converterType + " e = " + e.toString());
+                    }
+                } else {
+                    BindDesignLog.e(TAG, "converter has not been registered, converter = " + bind.converter);
                 }
             }
-            DependencyProperty dp = BindablePropertyRegister.obtain(bind.property, view.getClass());
+            DependencyProperty dp = PropertyRegister.obtain(bind.property, view.getClass());
             BindViewUtil.getDependencyObject(view).setBindings(dp, bd);
         }
 
         if (bind.event != null && bind.command != null) {
             ListenerToCommand ltc = null;
-            // TODO: parseCommand
-            if ("OnClick".equals(bind.event)) {
-                ltc = new OnClickListenerImp();
-            } else if ("OnItemClick".equals(bind.event)) {
-                ltc = new OnItemClickListenerImp();
-            } else if ("OnFocusChange".equals(bind.event)) {
-                ltc = new OnFocusChangeListenerImp();
+            // parse event
+            Class<? extends ListenerToCommand> listenerImp = ListenerImpRegister.getListenerImps().get(bind.event);
+            if (listenerImp != null) {
+                try {
+                    ltc = listenerImp.newInstance();
+                } catch (Exception e) {
+                    BindDesignLog.e(TAG, "create listenerImp failed. eventName = " + bind.event
+                            + " listenerImp = " + listenerImp + " e = " + e.toString());
+                }
             } else {
+                BindDesignLog.e(TAG, "listenerImp has not been registered, listenerImp = " + bind.event);
             }
 
             if (ltc != null) {
+                // parse command
                 CommandBinding cmdbd = new CommandBinding();
-                // TODO custom define cmd
-                Class<?> commandType = CommandRegister.getCommandsHashMap().get(bind.command);
-                if (commandType != null) {
+                Class<? extends ICommand> command = CommandRegister.getCommands().get(bind.command);
+                if (command != null) {
                     try {
-                        ltc.setCommand((ICommand) commandType.newInstance());
+                        ltc.setCommand(command.newInstance());
                     } catch (Exception e) {
                         BindDesignLog.e(TAG, "create command failed. commandName = " + bind.command
-                                + " commandType = " + commandType + " e = " + e.toString());
+                                + " commandType = " + command + " e = " + e.toString());
                     }
+                } else {
+                    BindDesignLog.e(TAG, "command has not been registered,use custom command = " + bind.command);
                 }
-//                if ("urlNavCommand".equals(bind.command)) {
-//                    ltc.setCommand(new UrlNavCommand());
-//                }
                 cmdbd.setCommandName(bind.command);
                 cmdbd.setCommandParamPath(bind.path);
                 ltc.registerToView(view);
@@ -238,15 +215,13 @@ public class ViewFactory implements Factory {
         }
     }
 
-    private void parseBinding(Bind bind, View view, String value) {
-        // path=data.bindValue
-        // -->
-        // path | data.bindValue
+    private void parseBinding(final BindMeta bind, final View view, final String value) {
+        // path=data.bindValue  -->  path | data.bindValue
         String[] vs = value.split("=");
         if (vs.length != 2) {
             if (view.isInEditMode())
-                throw new IllegalArgumentException("binding expression illegal");
-            BindDesignLog.e(TAG, "binding expression illegal");
+                throw new IllegalArgumentException("binding expression illegal, format like 'key=value'");
+            BindDesignLog.e(TAG, "binding expression illegal, format like 'k=v'");
             return;
         }
         String arg1 = vs[0], arg2 = vs[1];
@@ -265,7 +240,7 @@ public class ViewFactory implements Factory {
 
     public static String parseBindingSyntactic(View view, String attrValue) {
         // remove '{' and '}'
-        // "{bindValue}" --> "bindValue"
+        // "{bindValue}"  -->  "bindValue"
         if (!attrValue.startsWith("{") || !attrValue.endsWith("}")) {
             if (view.isInEditMode()) {
                 throw new IllegalArgumentException("binding expression must start with '{' and end with '}'");
@@ -280,11 +255,4 @@ public class ViewFactory implements Factory {
         return attrValue;
     }
 
-    class Bind {
-        String path;
-        String property;
-        String converter;
-        String command;
-        String event;
-    }
 }

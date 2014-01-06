@@ -62,7 +62,7 @@ public class BindEngine {
     public static void registerPropertyDeclareClass(String propertyDeclareClassName) {
         if (!StringUtil.compare(propertyDeclareClass, propertyDeclareClassName)) {
             propertyDeclareClass = propertyDeclareClassName;
-            BindDesignLog.d(TAG, "propertyDeclareClass =  " + propertyDeclareClass);
+            BindDesignLog.d(TAG, "registerPropertyDeclareClass:  " + propertyDeclareClass);
             if (!StringUtil.isNullOrEmpty(propertyDeclareClass)) {
                 Class<?> clazz = null;
                 try {

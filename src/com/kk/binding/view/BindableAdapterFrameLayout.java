@@ -23,9 +23,7 @@ import android.util.Log;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.FrameLayout;
-
 import com.android.binding.R;
-
 import com.kk.binding.adapter.BindViewGroupAdapter;
 import com.kk.binding.adapter.BindViewPagerAdapter;
 import com.kk.binding.adapter.ViewGroupAdapter;
@@ -46,13 +44,11 @@ public class BindableAdapterFrameLayout extends FrameLayout {
     private onAdapterCreatedListener onAdapterCreatedListener;
 
     public BindableAdapterFrameLayout(Context context) {
-        super(context);
-        init(null);
+        this(context, null, 0);
     }
 
     public BindableAdapterFrameLayout(Context context, AttributeSet attrs) {
-        super(context, attrs);
-        init(attrs);
+        this(context, attrs, 0);
     }
 
     public BindableAdapterFrameLayout(Context context, AttributeSet attrs, int defStyle) {

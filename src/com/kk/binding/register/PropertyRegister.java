@@ -30,19 +30,19 @@ import java.util.Map;
  * @author xuanjue.hk
  * @date 2013-2-28
  */
-public class BindablePropertyRegister {
-    private static final String TAG = "Binding-BindablePropertyRegister";
-    private static HashMap<Class<?>, HashMap<String, DependencyProperty>> propertyHashMapOfClass;
+public class PropertyRegister {
+    private static final String TAG = "Binding-PropertyRegister";
+    private static HashMap<Class<?>, HashMap<String, DependencyProperty>> properties;
 
     private static HashMap<Class<?>, HashMap<String, DependencyProperty>> getPropertyHashMap() {
-        if (propertyHashMapOfClass == null) {
-            propertyHashMapOfClass = new HashMap<Class<?>, HashMap<String, DependencyProperty>>(128);
-            initPropertyHashMapInner();
+        if (properties == null) {
+            properties = new HashMap<Class<?>, HashMap<String, DependencyProperty>>(128);
+            registerInner();
         }
-        return propertyHashMapOfClass;
+        return properties;
     }
 
-    private static void initPropertyHashMapInner() {
+    private static void registerInner() {
         //****************************************************************************************//
         // View
         //****************************************************************************************//

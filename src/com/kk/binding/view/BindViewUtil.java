@@ -27,13 +27,14 @@ import com.kk.binding.kernel.DependencyObject;
 import com.kk.binding.util.BindDesignLog;
 
 import java.lang.reflect.Type;
+import java.util.concurrent.TimeUnit;
 
 /**
  * @author xuanjue.hk
  * @date 2013-2-26
  */
 public class BindViewUtil {
-    private static final String TAG = "BindViewUtil";
+    private static final String TAG = "Bind-BindViewUtil";
     private static Converter converter;
 
     private static Converter defaultConverter = new Converter() {
@@ -140,7 +141,7 @@ public class BindViewUtil {
 
         if (BindDesignLog.isLogOpen()) {
             long end = System.nanoTime();
-            long delta = (end - start) / 1000000;
+            long delta = TimeUnit.NANOSECONDS.toMillis(end - start);
             BindDesignLog.w(TAG, "setDataContext for view (" + view.getClass().getSimpleName() + "), time(ms) = " + delta);
         }
     }

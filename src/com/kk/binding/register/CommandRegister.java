@@ -17,6 +17,7 @@
 package com.kk.binding.register;
 
 import com.kk.binding.command.UrlNavCommand;
+import com.kk.binding.kernel.ICommand;
 import com.kk.binding.util.StringUtil;
 
 import java.util.HashMap;
@@ -26,22 +27,22 @@ import java.util.HashMap;
  */
 public class CommandRegister {
     private static final String TAG = "Binding-CommandRegister";
-    private static HashMap<String, Class<?>> commandsHashMap;
+    private static HashMap<String, Class<? extends ICommand>> commands;
 
-    public static HashMap<String, Class<?>> getCommandsHashMap() {
-        if (commandsHashMap == null) {
-            commandsHashMap = new HashMap<String, Class<?>>(32);
+    public static HashMap<String, Class<? extends ICommand>> getCommands() {
+        if (commands == null) {
+            commands = new HashMap<String, Class<? extends ICommand>>(32);
             initCommandRegisterInner();
         }
-        return commandsHashMap;
+        return commands;
     }
 
     private static void initCommandRegisterInner() {
         register("urlNavCommand", UrlNavCommand.class);
     }
 
-    public static void register(String commandName, Class<?> commandType) {
+    public static void register(String commandName, Class<? extends ICommand> commandType) {
         if (!StringUtil.isNullOrEmpty(commandName) && commandType != null)
-            getCommandsHashMap().put(commandName, commandType);
+            getCommands().put(commandName, commandType);
     }
 }
