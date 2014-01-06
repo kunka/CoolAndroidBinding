@@ -20,8 +20,8 @@ import android.widget.ImageView;
 import android.widget.RatingBar;
 import android.widget.TextView;
 import com.kk.binding.kernel.DependencyProperty;
-import com.kk.binding.util.BindDesignLog;
-import com.kk.binding.view.ViewFactory;
+import com.kk.binding.util.BindLog;
+import com.kk.binding.kernel.ViewFactory;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -99,7 +99,7 @@ public class PropertyRegister {
             return new DependencyProperty(propertyName, Object.class, Object.class, "{}");
         }
 
-        BindDesignLog.d(TAG, "obtain DependencyProperty: propertyName = " + propertyName
+        BindLog.d(TAG, "obtain DependencyProperty: propertyName = " + propertyName
                 + " ownerType = " + ownerType);
 
         HashMap<String, DependencyProperty> propertyHashMap = getPropertyHashMap().get(ownerType);
@@ -131,7 +131,7 @@ public class PropertyRegister {
                 }
             }
         }
-        BindDesignLog.e(TAG, "Attempted to obtain an unregister DependencyProperty! propertyName = " + propertyName + " ownerType = " + ownerType);
+        BindLog.e(TAG, "Attempted to obtain an unregister DependencyProperty! propertyName = " + propertyName + " ownerType = " + ownerType);
         return null;
     }
 
@@ -140,13 +140,13 @@ public class PropertyRegister {
         HashMap<String, DependencyProperty> propertyHashMap = getPropertyHashMap().get(ownerType);
         if (propertyHashMap == null) {
             propertyHashMap = new HashMap<String, DependencyProperty>();
-            BindDesignLog.d(TAG, "register DependencyProperty for class:  " + ownerType);
+            BindLog.d(TAG, "register DependencyProperty for class:  " + ownerType);
             getPropertyHashMap().put(ownerType, propertyHashMap);
         }
         DependencyProperty dp = propertyHashMap.get(propertyName);
         if (dp == null) {
             dp = new DependencyProperty(propertyName, propertyType, ownerType, defaultValue);
-            BindDesignLog.d(TAG, "register DependencyProperty: propertyName = " + propertyName
+            BindLog.d(TAG, "register DependencyProperty: propertyName = " + propertyName
                     + " propertyType = " + propertyType
                     + " ownerType = " + ownerType
                     + " defaultValue = " + defaultValue);
@@ -154,7 +154,4 @@ public class PropertyRegister {
         }
         return dp;
     }
-
-    // TODO
-    // register BindValueSetter filter to optimize performance
 }

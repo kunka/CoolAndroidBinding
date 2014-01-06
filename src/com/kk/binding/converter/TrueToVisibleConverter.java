@@ -17,8 +17,6 @@ package com.kk.binding.converter;
 
 import android.view.View;
 
-import com.kk.binding.kernel.IValueConverter;
-
 /**
  * @author xuanjue.hk
  * @date 2013-5-28

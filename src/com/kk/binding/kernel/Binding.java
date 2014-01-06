@@ -15,9 +15,12 @@
  */
 package com.kk.binding.kernel;
 
-import com.kk.binding.util.BindDesignLog;
+import com.kk.binding.converter.IValueConverter;
+import com.kk.binding.property.INotifyPropertyChanged;
+import com.kk.binding.property.IPropertyChanged;
+import com.kk.binding.property.PropertyChangedEventArgs;
+import com.kk.binding.util.BindLog;
 import com.kk.binding.util.StringUtil;
-import com.kk.binding.view.ViewFactory;
 
 /**
  * @author xuanjue.hk
@@ -75,7 +78,7 @@ public class Binding {
 
     public void setDataContext(Object dataContext) {
         if (this.dataContext != dataContext) {
-            BindDesignLog.d(TAG, "OnBindDataContextChanged:\n"
+            BindLog.d(TAG, "OnBindDataContextChanged:\n"
                     + "\n propertyName = " + dp.getPropertyName()
                     + "\n path = " + path
                     + "\n oldDataContext = " + this.dataContext
@@ -110,7 +113,7 @@ public class Binding {
             return;
 
         if (!ViewFactory.BINDING_DATA_CONTEXT.equals(dp.getPropertyName())) {
-            BindDesignLog.d(TAG, "updateValue: target = \n"
+            BindLog.d(TAG, "updateValue: target = \n"
                     + "\n propertyName = " + dp.getPropertyName()
                     + "\n path = " + path
                     + "\n dataContext = " + dataContext);
@@ -119,7 +122,7 @@ public class Binding {
             value = DependencyObject.converterValue(value, valueConverter);
             dpo.setValue(dp, value, path);
         } else if (updateDataContext) {
-            BindDesignLog.d(TAG, "updateValue: target = \n"
+            BindLog.d(TAG, "updateValue: target = \n"
                     + "\n propertyName = " + dp.getPropertyName()
                     + "\n path = " + path
                     + "\n dataContext = " + dataContext);

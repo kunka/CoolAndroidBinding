@@ -24,7 +24,7 @@
         <attr name="binding20" format="string" />
     </declare-styleable>
 
-    <declare-styleable name="BindableFrameLayout">
+    <declare-styleable name="BindFrameLayout">
         <attr name="designData" format="reference" />
         <attr name="realData" format="reference" />
         <attr name="layout" format="reference" />
@@ -33,7 +33,7 @@
         <attr name="designDataContext" format="string" />
     </declare-styleable>
 
-    <declare-styleable name="BindableAdapterFrameLayout">
+    <declare-styleable name="BindAdapterFrameLayout">
         <attr name="childLayout" format="reference" />
     </declare-styleable>
 

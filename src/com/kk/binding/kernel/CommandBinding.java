@@ -15,8 +15,12 @@
  */
 package com.kk.binding.kernel;
 
+import com.kk.binding.command.ICommand;
 import com.kk.binding.listener.ListenerToCommand;
-import com.kk.binding.util.BindDesignLog;
+import com.kk.binding.property.INotifyPropertyChanged;
+import com.kk.binding.property.IPropertyChanged;
+import com.kk.binding.property.PropertyChangedEventArgs;
+import com.kk.binding.util.BindLog;
 import com.kk.binding.util.StringUtil;
 
 /**
@@ -24,7 +28,7 @@ import com.kk.binding.util.StringUtil;
  * @date 2013-2-27
  */
 public class CommandBinding {
-    private static final String TAG = "CommandBinding";
+    private static final String TAG = "Binding-CommandBinding";
     private String commandName;
     private String commandParamPath;
     private Object dataContext;
@@ -62,7 +66,7 @@ public class CommandBinding {
 
     public void setDataContext(Object dataContext) {
         if (this.dataContext != dataContext) {
-            BindDesignLog.d(TAG, "OnCmdBindDataContextChanged:\n"
+            BindLog.d(TAG, "OnCmdBindDataContextChanged:\n"
                     + "\n command = " + (ltc != null ? ltc.getCommand() : "null")
                     + "\n param = " + (ltc != null ? ltc.getParam() : "null")
                     + "\n cmdParamPath = " + commandParamPath
@@ -96,12 +100,12 @@ public class CommandBinding {
         if (ltc != null) {
             Object param = DependencyObject.parseBindValue(dataContext, commandParamPath);
             ltc.setParam(param);
-            BindDesignLog.d(TAG, "updateValue: paramValue = " + param);
+            BindLog.d(TAG, "updateValue: paramValue = " + param);
 
             // custom command
             if (ltc.getCommand() == null) {
                 Object value = DependencyObject.parseBindValue(dataContext, commandName);
-                BindDesignLog.d(TAG, "updateValue: command = " + (value != null ? value.toString() : null));
+                BindLog.d(TAG, "updateValue: command = " + (value != null ? value.toString() : null));
                 ltc.setCommand((ICommand) value);
             }
         }

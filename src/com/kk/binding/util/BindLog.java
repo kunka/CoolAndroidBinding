@@ -20,7 +20,7 @@ import android.util.Log;
 /**
  * Created by hk on 13-12-8.
  */
-public class BindDesignLog {
+public class BindLog {
     private static boolean inDesignMode = false;
     private static StringBuilder fullLog;
     private static boolean logOpen = true;
@@ -80,7 +80,7 @@ public class BindDesignLog {
     }
 
     public static void setInDesignMode(boolean inDesignMode) {
-        BindDesignLog.inDesignMode = inDesignMode;
+        BindLog.inDesignMode = inDesignMode;
         if (inDesignMode) {
             fullLog = new StringBuilder(1024 * 10);
         }

@@ -27,54 +27,54 @@ import com.android.binding.R;
 import com.kk.binding.adapter.BindViewGroupAdapter;
 import com.kk.binding.adapter.BindViewPagerAdapter;
 import com.kk.binding.adapter.ViewGroupAdapter;
-import com.kk.binding.util.BindDesignLog;
+import com.kk.binding.util.BindLog;
 
 /**
  * Created by hk on 13-12-4.
  */
-public class BindableAdapterFrameLayout extends FrameLayout {
+public class BindAdapterFrameLayout extends FrameLayout {
     public interface onAdapterCreatedListener {
         void onAdapterCreated();
     }
 
-    private static final String TAG = "Binding-BindableAdapterFrameLayout";
+    private static final String TAG = "Binding-BindAdapterFrameLayout";
     private int childLayoutId = 0;
     private BindViewGroupAdapter<ViewGroup> adapter;
     private BindViewPagerAdapter<ViewPager> pagerAdapter;
     private onAdapterCreatedListener onAdapterCreatedListener;
 
-    public BindableAdapterFrameLayout(Context context) {
+    public BindAdapterFrameLayout(Context context) {
         this(context, null, 0);
     }
 
-    public BindableAdapterFrameLayout(Context context, AttributeSet attrs) {
+    public BindAdapterFrameLayout(Context context, AttributeSet attrs) {
         this(context, attrs, 0);
     }
 
-    public BindableAdapterFrameLayout(Context context, AttributeSet attrs, int defStyle) {
+    public BindAdapterFrameLayout(Context context, AttributeSet attrs, int defStyle) {
         super(context, attrs, defStyle);
         init(attrs);
     }
 
-    public void setOnAdapterCreatedListener(BindableAdapterFrameLayout.onAdapterCreatedListener onAdapterCreatedListener) {
+    public void setOnAdapterCreatedListener(BindAdapterFrameLayout.onAdapterCreatedListener onAdapterCreatedListener) {
         this.onAdapterCreatedListener = onAdapterCreatedListener;
     }
 
     private void init(AttributeSet attrs) {
         Context context = getContext();
         if (attrs != null && context != null) {
-            TypedArray a = context.obtainStyledAttributes(attrs, R.styleable.BindableAdapterFrameLayout);
+            TypedArray a = context.obtainStyledAttributes(attrs, R.styleable.BindAdapterFrameLayout);
             if (a != null) {
-                childLayoutId = a.getResourceId(R.styleable.BindableAdapterFrameLayout_childLayout, 0);
+                childLayoutId = a.getResourceId(R.styleable.BindAdapterFrameLayout_childLayout, 0);
             }
         }
 
-        BindDesignLog.d(TAG, "inflate BindableAdapterFrameLayout");
+        BindLog.d(TAG, "inflate BindAdapterFrameLayout");
         if (childLayoutId > 0) {
             setOnHierarchyChangeListener(new OnHierarchyChangeListener() {
                 @Override
                 public void onChildViewAdded(View parent, View child) {
-                    BindDesignLog.d(TAG, "BindableAdapterFrameLayout onChildViewAdded: " + (parent.isInEditMode() ? child.getClass().getName() : child.toString()));
+                    BindLog.d(TAG, "BindAdapterFrameLayout onChildViewAdded: " + (parent.isInEditMode() ? child.getClass().getName() : child.toString()));
                     if (child instanceof ViewPager) {
                         pagerAdapter = new BindViewPagerAdapter<ViewPager>((ViewPager) child, childLayoutId);
                         if (onAdapterCreatedListener != null)
@@ -106,7 +106,7 @@ public class BindableAdapterFrameLayout extends FrameLayout {
     @Override
     protected void onFinishInflate() {
         super.onFinishInflate();
-        BindDesignLog.d(TAG, "onFinishInflate BindableAdapterFrameLayout");
+        BindLog.d(TAG, "onFinishInflate BindAdapterFrameLayout");
     }
 
     public BindViewGroupAdapter<ViewGroup> getAdapter() {

@@ -17,8 +17,8 @@ package com.kk.binding.listener;
 
 import android.view.View;
 
-import com.kk.binding.kernel.ICommand;
-import com.kk.binding.util.BindDesignLog;
+import com.kk.binding.command.ICommand;
+import com.kk.binding.util.BindLog;
 
 /**
  * @author xuanjue.hk
@@ -49,7 +49,7 @@ public abstract class ListenerToCommand {
             try {
                 mCommand.execute(view, args);
             } catch (Exception e) {
-                BindDesignLog.e("ListenerToCommand", "executeCommand failed " + e.toString());
+                BindLog.e("ListenerToCommand", "executeCommand failed " + e.toString());
             }
     }
 

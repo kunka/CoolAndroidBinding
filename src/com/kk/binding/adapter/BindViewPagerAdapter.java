@@ -21,8 +21,8 @@ import java.util.List;
 
 import com.kk.binding.kernel.DependencyObject;
 import com.kk.binding.kernel.OnDataContextChanged;
-import com.kk.binding.kernel.PropertyChangedEventArgs;
-import com.kk.binding.util.BindDesignLog;
+import com.kk.binding.property.PropertyChangedEventArgs;
+import com.kk.binding.util.BindLog;
 import com.kk.binding.view.BindViewUtil;
 
 /**
@@ -39,7 +39,7 @@ public class BindViewPagerAdapter<T extends ViewPager> extends ViewPagerAdapter 
         dp.setOnDataContextTargetChangedListener(new OnDataContextChanged() {
             @Override
             public boolean onDataContextChanged(DependencyObject dpo, PropertyChangedEventArgs args) {
-                BindDesignLog.d("Binding-BindViewPagerAdapter", "setDataContextTargetChanged "
+                BindLog.d("Binding-BindViewPagerAdapter", "setDataContextTargetChanged "
                         + "\n viewPager = " + (getViewPager().isInEditMode() ? getViewPager().getClass().toString() : getViewPager().toString())
                         + "\n oldValue = " + (args.getOldValue() != null ? args.getOldValue().toString() : null)
                         + "\n newValue = " + (args.getNewValue() != null ? args.getNewValue().toString() : null));

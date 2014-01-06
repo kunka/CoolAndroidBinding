@@ -21,7 +21,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
-import com.kk.binding.util.BindDesignLog;
+import com.kk.binding.util.BindLog;
 
 import java.util.List;
 
@@ -73,35 +73,35 @@ public abstract class SimpleListAdapter<T> extends BaseAdapter {
         View v = convertView;
         if (convertView == null) {
             long start = 0;
-            if (BindDesignLog.isLogOpen()) {
+            if (BindLog.isLogOpen()) {
                 start = System.nanoTime();
             }
 
             v = inflateView(mResId, viewGroup);
 
-            if (BindDesignLog.isLogOpen()) {
+            if (BindLog.isLogOpen()) {
                 long end = System.nanoTime();
-                BindDesignLog.d(TAG, "getView, inflate time(ms) = " + (end - start) / 1000000);
+                BindLog.d(TAG, "getView, inflate time(ms) = " + (end - start) / 1000000);
             }
         }
 
         long start = 0;
-        if (BindDesignLog.isLogOpen()) {
+        if (BindLog.isLogOpen()) {
             start = System.nanoTime();
         }
 
-        if (BindDesignLog.isLogOpen()) {
-            BindDesignLog.d(TAG, "onBindData, position = " + position + " totalCount = " + getCount());
+        if (BindLog.isLogOpen()) {
+            BindLog.d(TAG, "onBindData, position = " + position + " totalCount = " + getCount());
         }
 
         onBindData(v, mData.get(position), position);
 
-        if (BindDesignLog.isLogOpen()) {
+        if (BindLog.isLogOpen()) {
             long end = System.nanoTime();
             long delta = (end - start) / 1000000;
             // Only log the unusual time
             if (delta > 2)
-                BindDesignLog.w(TAG, "onBindData, time(ms) = " + delta);
+                BindLog.w(TAG, "onBindData, time(ms) = " + delta);
         }
         return v;
     }

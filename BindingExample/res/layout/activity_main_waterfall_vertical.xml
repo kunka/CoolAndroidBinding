@@ -1,4 +1,4 @@
-<com.kk.binding.view.BindableFrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<com.kk.binding.view.BindFrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     app:designData="@raw/main"
@@ -26,7 +26,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content" />
 
-            <com.kk.binding.view.BindableAdapterFrameLayout
+            <com.kk.binding.view.BindAdapterFrameLayout
                 android:layout_marginTop="14dp"
                 android:layout_width="fill_parent"
                 binding:dataContext="{data.content}"
@@ -42,9 +42,9 @@
                     app:divideSpace="true"
                     app:verticalPadding="4dp"
                     android:layout_height="wrap_content" />
-            </com.kk.binding.view.BindableAdapterFrameLayout>
+            </com.kk.binding.view.BindAdapterFrameLayout>
         </LinearLayout>
 
     </ScrollView>
 
-</com.kk.binding.view.BindableFrameLayout>
+</com.kk.binding.view.BindFrameLayout>

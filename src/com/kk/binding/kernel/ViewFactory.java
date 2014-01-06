@@ -13,20 +13,23 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.kk.binding.view;
+package com.kk.binding.kernel;
 
 import android.content.Context;
 import android.util.AttributeSet;
 import android.view.LayoutInflater;
 import android.view.LayoutInflater.Factory;
 import android.view.View;
+import com.kk.binding.command.ICommand;
+import com.kk.binding.converter.IValueConverter;
 import com.kk.binding.kernel.*;
 import com.kk.binding.listener.ListenerToCommand;
 import com.kk.binding.register.CommandRegister;
 import com.kk.binding.register.ConverterRegister;
 import com.kk.binding.register.ListenerImpRegister;
 import com.kk.binding.register.PropertyRegister;
-import com.kk.binding.util.BindDesignLog;
+import com.kk.binding.util.BindLog;
+import com.kk.binding.view.BindViewUtil;
 
 import java.lang.reflect.Constructor;
 
@@ -61,7 +64,7 @@ public class ViewFactory implements Factory {
 
     @Override
     public View onCreateView(String name, Context context, AttributeSet attrs) {
-        BindDesignLog.d(TAG, "onCreateView name = " + name);
+        BindLog.d(TAG, "onCreateView name = " + name);
         View view = createViewByInflater(name, context, attrs);
         if (view == null)
             return null;
@@ -70,7 +73,7 @@ public class ViewFactory implements Factory {
             String attrName = attrs.getAttributeName(i);
             String attrValue = attrs.getAttributeValue(BINDING_NAMESPACE, attrName);
             if (attrValue != null && attrName != null) {
-                BindDesignLog.d(TAG, "onCreateView parseBindingAttribute: attrName = " + attrName + " attrValue = " + attrValue);
+                BindLog.d(TAG, "onCreateView parseBindingAttribute: attrName = " + attrName + " attrValue = " + attrValue);
                 if (attrName.startsWith(BINDING_NAME_PREFIX)) {
                     parseAttribute(view, attrName, attrValue);
                 } else if (attrName.equals(BINDING_DATA_CONTEXT)) {
@@ -91,33 +94,33 @@ public class ViewFactory implements Factory {
             else
                 viewFullName = "android.widget." + name;
 
-            BindDesignLog.d(TAG, "onCreateView viewFullName = " + viewFullName);
+            BindLog.d(TAG, "onCreateView viewFullName = " + viewFullName);
             return mInflater.createView(viewFullName, null, attrs);
         } catch (Exception e) {
             // design mode cannot find custom class?! inflate will failed, shit! :(
             // so we use the class name to create instance.
-            BindDesignLog.e(TAG, "onCreateView exception = " + e.toString());
+            BindLog.e(TAG, "onCreateView exception = " + e.toString());
             Class<?> clazz = null;
             try {
                 clazz = Class.forName(viewFullName);
             } catch (ClassNotFoundException e0) {
-                BindDesignLog.e(TAG, " class not found " + e0.toString());
+                BindLog.e(TAG, " class not found " + e0.toString());
             }
             if (clazz != null) {
-                BindDesignLog.d(TAG, "onCreateView class founded = " + clazz.toString());
+                BindLog.d(TAG, "onCreateView class founded = " + clazz.toString());
                 Constructor<?> constructor = null;
                 try {
                     constructor = clazz.getDeclaredConstructor(Context.class, AttributeSet.class);
                 } catch (Exception e1) {
-                    BindDesignLog.e(TAG, "onCreateView getDeclaredConstructor failed  = " + e1.toString());
+                    BindLog.e(TAG, "onCreateView getDeclaredConstructor failed  = " + e1.toString());
                 }
 
                 if (constructor != null) {
-                    BindDesignLog.d(TAG, "onCreateView getDeclaredConstructor success = " + constructor.toString());
+                    BindLog.d(TAG, "onCreateView getDeclaredConstructor success = " + constructor.toString());
                     try {
                         return (View) constructor.newInstance(context, attrs);
                     } catch (Exception e1) {
-                        BindDesignLog.e(TAG, "onCreateView newInstance failed  = " + e1.toString());
+                        BindLog.e(TAG, "onCreateView newInstance failed  = " + e1.toString());
                     }
                 }
             }
@@ -146,7 +149,7 @@ public class ViewFactory implements Factory {
         if (values.length < 2) {
             if (view.isInEditMode())
                 throw new IllegalArgumentException("binding expression illegal, at least specify the property and path");
-            BindDesignLog.e(TAG, "binding expression illegal, at least specify the property and path");
+            BindLog.e(TAG, "binding expression illegal, at least specify the property and path");
             return;
         }
         BindMeta bind = new BindMeta();
@@ -167,11 +170,11 @@ public class ViewFactory implements Factory {
                     try {
                         bd.setValueConverter(converterType.newInstance());
                     } catch (Exception e) {
-                        BindDesignLog.e(TAG, "create converter failed. converterName = " + bind.converter
+                        BindLog.e(TAG, "create converter failed. converterName = " + bind.converter
                                 + " converterType = " + converterType + " e = " + e.toString());
                     }
                 } else {
-                    BindDesignLog.e(TAG, "converter has not been registered, converter = " + bind.converter);
+                    BindLog.e(TAG, "converter has not been registered, converter = " + bind.converter);
                 }
             }
             DependencyProperty dp = PropertyRegister.obtain(bind.property, view.getClass());
@@ -186,11 +189,11 @@ public class ViewFactory implements Factory {
                 try {
                     ltc = listenerImp.newInstance();
                 } catch (Exception e) {
-                    BindDesignLog.e(TAG, "create listenerImp failed. eventName = " + bind.event
+                    BindLog.e(TAG, "create listenerImp failed. eventName = " + bind.event
                             + " listenerImp = " + listenerImp + " e = " + e.toString());
                 }
             } else {
-                BindDesignLog.e(TAG, "listenerImp has not been registered, listenerImp = " + bind.event);
+                BindLog.e(TAG, "listenerImp has not been registered, listenerImp = " + bind.event);
             }
 
             if (ltc != null) {
@@ -201,11 +204,11 @@ public class ViewFactory implements Factory {
                     try {
                         ltc.setCommand(command.newInstance());
                     } catch (Exception e) {
-                        BindDesignLog.e(TAG, "create command failed. commandName = " + bind.command
+                        BindLog.e(TAG, "create command failed. commandName = " + bind.command
                                 + " commandType = " + command + " e = " + e.toString());
                     }
                 } else {
-                    BindDesignLog.e(TAG, "command has not been registered,use custom command = " + bind.command);
+                    BindLog.e(TAG, "command has not been registered,use custom command = " + bind.command);
                 }
                 cmdbd.setCommandName(bind.command);
                 cmdbd.setCommandParamPath(bind.path);
@@ -221,7 +224,7 @@ public class ViewFactory implements Factory {
         if (vs.length != 2) {
             if (view.isInEditMode())
                 throw new IllegalArgumentException("binding expression illegal, format like 'key=value'");
-            BindDesignLog.e(TAG, "binding expression illegal, format like 'k=v'");
+            BindLog.e(TAG, "binding expression illegal, format like 'k=v'");
             return;
         }
         String arg1 = vs[0], arg2 = vs[1];
@@ -246,7 +249,7 @@ public class ViewFactory implements Factory {
                 throw new IllegalArgumentException("binding expression must start with '{' and end with '}'");
             } else {
                 // ignore
-                BindDesignLog.e(TAG, "binding expression must start with '{' and end with '}'");
+                BindLog.e(TAG, "binding expression must start with '{' and end with '}'");
                 return null;
             }
         }

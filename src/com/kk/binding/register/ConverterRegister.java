@@ -20,7 +20,7 @@ import com.kk.binding.converter.FalseToVisibleConverter;
 import com.kk.binding.converter.NotNullToVisibleConverter;
 import com.kk.binding.converter.NullToVisibleConverter;
 import com.kk.binding.converter.TrueToVisibleConverter;
-import com.kk.binding.kernel.IValueConverter;
+import com.kk.binding.converter.IValueConverter;
 import com.kk.binding.util.StringUtil;
 
 import java.util.HashMap;

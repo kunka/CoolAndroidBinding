@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2012 Square, Inc.
+ * Copyright (C) 2013 kk-team.com.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -13,18 +13,27 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.kk.binding.converter;
+package com.kk.binding.view;
 
 import java.io.InputStream;
 import java.lang.reflect.Type;
 
 /**
- *
+ * Created by hk on 13-12-4.
  */
-public interface IConverter {
-    Object from(String string, Type type);
+public abstract class Converter implements IConverter {
+    @Override
+    public Object from(byte[] data, Type type) {
+        return null;
+    }
 
-    Object from(byte[] data, Type type);
+    @Override
+    public Object from(InputStream inputStreams, Type type) {
+        return null;
+    }
 
-    Object from(InputStream inputStreams, Type type);
+    @Override
+    public Object from(String string, Type type) {
+        return null;
+    }
 }

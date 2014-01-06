@@ -13,13 +13,13 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.kk.binding.feature;
+package com.kk.binding.property;
 
 import java.util.ArrayList;
 
-import com.kk.binding.kernel.INotifyPropertyChanged;
-import com.kk.binding.kernel.IPropertyChanged;
-import com.kk.binding.kernel.PropertyChangedEventArgs;
+import com.kk.binding.property.INotifyPropertyChanged;
+import com.kk.binding.property.IPropertyChanged;
+import com.kk.binding.property.PropertyChangedEventArgs;
 
 /**
  * @author xuanjue.hk

@@ -13,12 +13,14 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.kk.binding.kernel;
+package com.kk.binding.command;
+
+import android.view.View;
 
 /**
  * @author xuanjue.hk
- * @date 2013-5-28
- */
-public interface IValueConverter {
-    public Object converter(Object source) throws Exception;
+ * @date 2013-2-27
+ * */
+public interface ICommand {
+	public void execute(View view, Object... args);
 }

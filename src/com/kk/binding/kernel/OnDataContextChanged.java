@@ -15,6 +15,8 @@
  */
 package com.kk.binding.kernel;
 
+import com.kk.binding.property.PropertyChangedEventArgs;
+
 public interface OnDataContextChanged {
     public boolean onDataContextChanged(DependencyObject dpo, PropertyChangedEventArgs args);
 }

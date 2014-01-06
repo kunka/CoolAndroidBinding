@@ -15,9 +15,10 @@
  */
 package com.kk.binding.kernel;
 
+import com.kk.binding.converter.IValueConverter;
 import com.kk.binding.listener.ListenerToCommand;
-import com.kk.binding.util.BindDesignLog;
-import com.kk.binding.view.ViewFactory;
+import com.kk.binding.property.PropertyChangedEventArgs;
+import com.kk.binding.util.BindLog;
 
 import java.lang.reflect.Method;
 import java.util.ArrayList;
@@ -81,8 +82,8 @@ public class DependencyObject {
         Object targetObject = getResolvedTargetObject();
         boolean handled = false;
         if (/*targetObject != oldTargetObject &&*/ dataContextTargetChangedListener != null) {
-            BindDesignLog.d(TAG, "dataContext Changed: \ntarget= "
-                    + (originTarget != null ? (BindDesignLog.isInDesignMode() ? originTarget.getClass().toString() : originTarget.toString()) : null)
+            BindLog.d(TAG, "dataContext Changed: \ntarget= "
+                    + (originTarget != null ? (BindLog.isInDesignMode() ? originTarget.getClass().toString() : originTarget.toString()) : null)
                     + "\n oldValue= " + (oldTargetObject != null ? oldTargetObject.toString() : null)
                     + "\n newValue= " + (targetObject != null ? targetObject.toString() : null));
             handled = dataContextTargetChangedListener.onDataContextChanged(this, new PropertyChangedEventArgs(ViewFactory.BINDING_DATA_CONTEXT, oldTargetObject, targetObject));
@@ -157,8 +158,8 @@ public class DependencyObject {
             return;
 
         if (BindEngine.getBindValueSetter() != null && BindEngine.getBindValueSetter().setValue(originTarget, dp, value, path)) {
-            BindDesignLog.d(TAG, "BindValueSetter setValue: target = \n"
-                    + (BindDesignLog.isInDesignMode() ? originTarget.getClass().toString() : originTarget.toString())
+            BindLog.d(TAG, "BindValueSetter setValue: target = \n"
+                    + (BindLog.isInDesignMode() ? originTarget.getClass().toString() : originTarget.toString())
                     + "\n propertyName = " + dp.getPropertyName()
                     + "\n propertyType = " + dp.getPropertyType()
                     + "\n path = " + path
@@ -195,7 +196,7 @@ public class DependencyObject {
             } else if (propertyType == double.class) {
                 setValue = Short.valueOf(property);
             } else {
-                if (BindDesignLog.isInDesignMode())
+                if (BindLog.isInDesignMode())
                     throw new RuntimeException("Wrong base type in " + propertyType.toString());
             }
         } else {
@@ -206,8 +207,8 @@ public class DependencyObject {
             }
         }
 
-        BindDesignLog.d(TAG, "setValue: target = \n"
-                + (BindDesignLog.isInDesignMode() ? originTarget.getClass().toString() : originTarget.toString())
+        BindLog.d(TAG, "setValue: target = \n"
+                + (BindLog.isInDesignMode() ? originTarget.getClass().toString() : originTarget.toString())
                 + "\n propertyName = " + dp.getPropertyName()
                 + "\n setMethodName = " + setMethodName
                 + "\n propertyType = " + dp.getPropertyType()
@@ -219,7 +220,7 @@ public class DependencyObject {
         try {
             setMethod = originTarget.getClass().getMethod(setMethodName, dp.getPropertyType());
         } catch (Exception e) {
-            BindDesignLog.e(TAG, "getMethod failed, targetClass = \n" + originTarget.getClass().toString()
+            BindLog.e(TAG, "getMethod failed, targetClass = \n" + originTarget.getClass().toString()
                     + "\n e = " + e.toString());
         }
 
@@ -230,7 +231,7 @@ public class DependencyObject {
                 setMethod.invoke(originTarget, setValue);
                 values.put(dp, value);
             } catch (Exception e) {
-                BindDesignLog.e(TAG, "invoke failed, targetClass = \n" + originTarget.getClass().toString()
+                BindLog.e(TAG, "invoke failed, targetClass = \n" + originTarget.getClass().toString()
                         + "\n setMethod = " + setMethod
                         + "\n e = " + e.toString());
             }
@@ -240,8 +241,8 @@ public class DependencyObject {
     public void setCmdBindings(ListenerToCommand ltc, final CommandBinding commandBinding) {
         if (ltc == null || commandBinding == null)
             return;
-        BindDesignLog.d(TAG, "setCmdBindings: target = \n"
-                + (originTarget != null ? (BindDesignLog.isInDesignMode() ? originTarget.getClass().toString() : originTarget.toString()) : null)
+        BindLog.d(TAG, "setCmdBindings: target = \n"
+                + (originTarget != null ? (BindLog.isInDesignMode() ? originTarget.getClass().toString() : originTarget.toString()) : null)
                 + "\n commandName = " + commandBinding.getCommandName()
                 + "\n commandParamPath = " + commandBinding.getCommandParamPath());
         commandBinding.setListenerToCommand(ltc);
@@ -254,8 +255,8 @@ public class DependencyObject {
     public void setBindings(DependencyProperty dp, final Binding binding) {
         if (dp == null || binding == null)
             return;
-        BindDesignLog.d(TAG, "setBindings: target = \n"
-                + (originTarget != null ? (BindDesignLog.isInDesignMode() ? originTarget.getClass().toString() : originTarget.toString()) : null)
+        BindLog.d(TAG, "setBindings: target = \n"
+                + (originTarget != null ? (BindLog.isInDesignMode() ? originTarget.getClass().toString() : originTarget.toString()) : null)
                 + "\n propertyName = " + dp.getPropertyName()
                 + "\n path = " + binding.getPath());
         binding.setDependencyProperty(dp);
@@ -346,7 +347,7 @@ public class DependencyObject {
             Method method = o.getClass().getMethod(getter, new Class[]{});
             return method.invoke(o);
         } catch (Exception e) {
-            BindDesignLog.d(TAG, "getFieldValueByName: e = " + e);
+            BindLog.d(TAG, "getFieldValueByName: e = " + e);
             return null;
         }
     }
@@ -356,7 +357,7 @@ public class DependencyObject {
         try {
             return converter.converter(value);
         } catch (Exception e) {
-            BindDesignLog.e(TAG, "converter exception " + e.toString());
+            BindLog.e(TAG, "converter exception " + e.toString());
             return null;
         }
     }

@@ -17,7 +17,7 @@
 package com.kk.binding.register;
 
 import com.kk.binding.command.UrlNavCommand;
-import com.kk.binding.kernel.ICommand;
+import com.kk.binding.command.ICommand;
 import com.kk.binding.util.StringUtil;
 
 import java.util.HashMap;

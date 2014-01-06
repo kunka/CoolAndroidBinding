@@ -21,7 +21,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
-import com.kk.binding.util.BindDesignLog;
+import com.kk.binding.util.BindLog;
 import com.kk.binding.view.BindViewUtil;
 
 import java.util.Arrays;
@@ -60,7 +60,7 @@ public class SimpleBindPagerAdapter extends PagerAdapter {
     public Object instantiateItem(ViewGroup container, int position) {
         viewPager = container;
         if (position >= mData.size()) return null;
-        BindDesignLog.d(TAG, "instantiateItem "
+        BindLog.d(TAG, "instantiateItem "
                 + "\n position = " + position
                 + "\n data = " + mData.get(position));
 
@@ -81,7 +81,7 @@ public class SimpleBindPagerAdapter extends PagerAdapter {
 
 //    @Override
 //    public float getPageWidth(int position) {
-//        BindDesignLog.d(TAG, "getPageWidth position = " + position);
+//        BindLog.d(TAG, "getPageWidth position = " + position);
 //        if (viewPager != null && viewPager.getChildCount() > position) {
 //            View child = viewPager.getChildAt(position);
 //            int width = 0;
@@ -89,7 +89,7 @@ public class SimpleBindPagerAdapter extends PagerAdapter {
 //                width = child.getMeasuredWidth();
 //            }
 //            int pagerWidth = viewPager.getMeasuredWidth();
-//            BindDesignLog.d(TAG, "getPageWidth "
+//            BindLog.d(TAG, "getPageWidth "
 //                    + "\n width = " + width
 //                    + "\n pagerWidth = " + pagerWidth
 //                    + "\n position = " + position);

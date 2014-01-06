@@ -13,13 +13,13 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.kk.binding.kernel;
+package com.kk.binding.property;
 
 
 /**
  * @author xuanjue.hk
  * @date 2013-2-25
  * */
-public interface INotifyPropertyChanged {
-	public void setPropertyChangedListener(IPropertyChanged listener);
+public interface IPropertyChanged {
+	public void propertyChanged(Object sender, PropertyChangedEventArgs args);
 }

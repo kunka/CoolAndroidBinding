@@ -13,14 +13,13 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.kk.binding.kernel;
+package com.kk.binding.property;
 
-import android.view.View;
 
 /**
  * @author xuanjue.hk
- * @date 2013-2-27
+ * @date 2013-2-25
  * */
-public interface ICommand {
-	public void execute(View view, Object... args);
+public interface INotifyPropertyChanged {
+	public void setPropertyChangedListener(IPropertyChanged listener);
 }

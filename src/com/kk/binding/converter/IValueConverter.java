@@ -13,13 +13,12 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.kk.binding.kernel;
-
+package com.kk.binding.converter;
 
 /**
  * @author xuanjue.hk
- * @date 2013-2-25
- * */
-public interface IPropertyChanged {
-	public void propertyChanged(Object sender, PropertyChangedEventArgs args);
+ * @date 2013-5-28
+ */
+public interface IValueConverter {
+    public Object converter(Object source) throws Exception;
 }

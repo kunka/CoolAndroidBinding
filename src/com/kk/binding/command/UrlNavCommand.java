@@ -20,8 +20,7 @@ import android.net.Uri;
 import android.view.View;
 
 import com.kk.binding.kernel.BindEngine;
-import com.kk.binding.kernel.ICommand;
-import com.kk.binding.util.BindDesignLog;
+import com.kk.binding.util.BindLog;
 
 /**
  * Created by hk on 13-12-13.
@@ -36,7 +35,7 @@ public class UrlNavCommand implements ICommand {
                 try {
                     BindEngine.instance().getContext().startActivity(intent);
                 } catch (Exception e) {
-                    BindDesignLog.e("UrlNavCommand execute exception ", e.toString());
+                    BindLog.e("UrlNavCommand execute exception ", e.toString());
                 }
             }
         }

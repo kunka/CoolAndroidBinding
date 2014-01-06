@@ -21,10 +21,9 @@ import android.view.View;
 import android.view.ViewGroup;
 import com.alibaba.fastjson.JSON;
 import com.android.binding.R;
-import com.kk.binding.converter.Converter;
-import com.kk.binding.converter.IConverter;
 import com.kk.binding.kernel.DependencyObject;
-import com.kk.binding.util.BindDesignLog;
+import com.kk.binding.kernel.ViewFactory;
+import com.kk.binding.util.BindLog;
 
 import java.lang.reflect.Type;
 import java.util.concurrent.TimeUnit;
@@ -67,7 +66,7 @@ public class BindViewUtil {
     public static void injectInflater(Context context) {
         LayoutInflater inflater = LayoutInflater.from(context);
         if (inflater.getFactory() == null) {
-            BindDesignLog.d(TAG, "did injectInflater");
+            BindLog.d(TAG, "did injectInflater");
             ViewFactory factory = new ViewFactory(inflater);
             inflater.setFactory(factory);
         }
@@ -109,7 +108,7 @@ public class BindViewUtil {
         if (view == null) //|| getBindDataObject(view) == dataContext)
             return;
         // view.toString() will throw exception when you set a view's id in xml
-        BindDesignLog.d(TAG, "setDataContext : view(" + level + ") = \n"
+        BindLog.d(TAG, "setDataContext : view(" + level + ") = \n"
                 + (view.isInEditMode() ? view.getClass().getName() : view.toString())
                 + "\n dataContext= " + (dataContext != null ? dataContext.toString() : null));
         view.setTag(R.id.tag_for_binding_data_object, dataContext);
@@ -125,7 +124,7 @@ public class BindViewUtil {
             int count = vg.getChildCount();
             for (int i = 0; i < count; i++) {
                 View v = vg.getChildAt(i);
-                BindDesignLog.d(TAG, "setDataContext : child(" + i + "), total(" + count + ")");
+                BindLog.d(TAG, "setDataContext : child(" + i + "), total(" + count + ")");
                 setDataContext(v, targetObject, level);
             }
         }
@@ -133,16 +132,16 @@ public class BindViewUtil {
 
     public static void setDataContext(final View view, final Object dataContext) {
         long start = 0;
-        if (BindDesignLog.isLogOpen()) {
+        if (BindLog.isLogOpen()) {
             start = System.nanoTime();
         }
 
         setDataContext(view, dataContext, 0);
 
-        if (BindDesignLog.isLogOpen()) {
+        if (BindLog.isLogOpen()) {
             long end = System.nanoTime();
             long delta = TimeUnit.NANOSECONDS.toMillis(end - start);
-            BindDesignLog.w(TAG, "setDataContext for view (" + view.getClass().getSimpleName() + "), time(ms) = " + delta);
+            BindLog.w(TAG, "setDataContext for view (" + view.getClass().getSimpleName() + "), time(ms) = " + delta);
         }
     }
 

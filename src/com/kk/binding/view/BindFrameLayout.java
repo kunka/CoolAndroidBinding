@@ -23,8 +23,9 @@ import com.android.binding.R;
 import com.kk.binding.kernel.BindEngine;
 import com.kk.binding.kernel.Binding;
 import com.kk.binding.kernel.DependencyProperty;
+import com.kk.binding.kernel.ViewFactory;
 import com.kk.binding.register.PropertyRegister;
-import com.kk.binding.util.BindDesignLog;
+import com.kk.binding.util.BindLog;
 import com.kk.binding.util.StringUtil;
 
 import java.io.IOException;
@@ -33,8 +34,8 @@ import java.io.InputStream;
 /**
  * Created by hk on 13-12-4.
  */
-public class BindableFrameLayout extends FrameLayout {
-    private static final String TAG = "Binding-BindableFrameLayout";
+public class BindFrameLayout extends FrameLayout {
+    private static final String TAG = "Binding-BindFrameLayout";
     private int designDataResId = 0;
     private int realDataResId = 0;
     private int layoutId = 0;
@@ -43,15 +44,15 @@ public class BindableFrameLayout extends FrameLayout {
     private String dataContext = "";
     private boolean asRootContainer = true;
 
-    public BindableFrameLayout(Context context) {
+    public BindFrameLayout(Context context) {
         this(context, null, 0);
     }
 
-    public BindableFrameLayout(Context context, AttributeSet attrs) {
+    public BindFrameLayout(Context context, AttributeSet attrs) {
         this(context, attrs, 0);
     }
 
-    public BindableFrameLayout(Context context, AttributeSet attrs, int defStyle) {
+    public BindFrameLayout(Context context, AttributeSet attrs, int defStyle) {
         super(context, attrs, defStyle);
         init(attrs);
     }
@@ -59,22 +60,22 @@ public class BindableFrameLayout extends FrameLayout {
     private void init(AttributeSet attrs) {
         Context context = getContext();
         if (attrs != null && context != null) {
-            TypedArray a = context.obtainStyledAttributes(attrs, R.styleable.BindableFrameLayout);
+            TypedArray a = context.obtainStyledAttributes(attrs, R.styleable.BindFrameLayout);
             if (a != null) {
-                designDataResId = a.getResourceId(R.styleable.BindableFrameLayout_designData, 0);
-                layoutId = a.getResourceId(R.styleable.BindableFrameLayout_layout, 0);
-                dataClass = a.getString(R.styleable.BindableFrameLayout_dataClass);
-                dataContext = a.getString(R.styleable.BindableFrameLayout_designDataContext);
-                propertyDeclareClass = a.getString(R.styleable.BindableFrameLayout_propertyDeclareClass);
-                realDataResId = a.getResourceId(R.styleable.BindableFrameLayout_realData, 0);
+                designDataResId = a.getResourceId(R.styleable.BindFrameLayout_designData, 0);
+                layoutId = a.getResourceId(R.styleable.BindFrameLayout_layout, 0);
+                dataClass = a.getString(R.styleable.BindFrameLayout_dataClass);
+                dataContext = a.getString(R.styleable.BindFrameLayout_designDataContext);
+                propertyDeclareClass = a.getString(R.styleable.BindFrameLayout_propertyDeclareClass);
+                realDataResId = a.getResourceId(R.styleable.BindFrameLayout_realData, 0);
             }
         }
         asRootContainer = !(layoutId > 0);
-        BindDesignLog.setInDesignMode(isInEditMode());
+        BindLog.setInDesignMode(isInEditMode());
         BindViewUtil.injectInflater(getContext());
         BindEngine.registerPropertyDeclareClass(propertyDeclareClass);
 
-        BindDesignLog.d(TAG, "inflate BindableFrameLayout");
+        BindLog.d(TAG, "inflate BindFrameLayout");
         if (isInEditMode()) {
             if (designDataResId > 0) {
                 // as layout container
@@ -85,7 +86,7 @@ public class BindableFrameLayout extends FrameLayout {
 //                    setOnHierarchyChangeListener(new OnHierarchyChangeListener() {
 //                        @Override
 //                        public void onChildViewAdded(View parent, View child) {
-//                            BindDesignLog.d(TAG, "BindableFrameLayout onChildViewAdded: " + (parent.isInEditMode() ? child.getClass().getName() : child.toString()));
+//                            BindLog.d(TAG, "BindFrameLayout onChildViewAdded: " + (parent.isInEditMode() ? child.getClass().getName() : child.toString()));
 //                        }
 //
 //                        @Override
@@ -99,7 +100,7 @@ public class BindableFrameLayout extends FrameLayout {
 //            setOnHierarchyChangeListener(new OnHierarchyChangeListener() {
 //                @Override
 //                public void onChildViewAdded(View parent, View child) {
-//                    BindDesignLog.d(TAG, "BindableFrameLayout onChildViewAdded: " + (parent.isInEditMode() ? child.getClass().getName() : child.toString()));
+//                    BindLog.d(TAG, "BindFrameLayout onChildViewAdded: " + (parent.isInEditMode() ? child.getClass().getName() : child.toString()));
 //                }
 //
 //                @Override
@@ -112,7 +113,7 @@ public class BindableFrameLayout extends FrameLayout {
     @Override
     protected void onFinishInflate() {
         super.onFinishInflate();
-        BindDesignLog.d(TAG, "onFinishInflate BindableFrameLayout");
+        BindLog.d(TAG, "onFinishInflate BindFrameLayout");
 
         if (isInEditMode()) {
             if (designDataResId > 0) {
@@ -130,7 +131,7 @@ public class BindableFrameLayout extends FrameLayout {
             }
         }
         // print log in design mode
-        // BindDesignLog.throwDesignLog();
+        // BindLog.throwDesignLog();
     }
 
     private void bindDataInDesign(int resId) {
@@ -161,7 +162,7 @@ public class BindableFrameLayout extends FrameLayout {
             } catch (ClassNotFoundException e) {
                 if (isInEditMode())
                     throw new RuntimeException("parse dataClass failed " + e.toString());
-                BindDesignLog.e(TAG, "parse dataClass failed " + e.toString());
+                BindLog.e(TAG, "parse dataClass failed " + e.toString());
             }
         }
         if (!StringUtil.isNullOrEmpty(dataContext)) {

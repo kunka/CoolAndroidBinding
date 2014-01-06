@@ -18,8 +18,8 @@ package com.kk.binding.adapter;
 import android.view.ViewGroup;
 import com.kk.binding.kernel.DependencyObject;
 import com.kk.binding.kernel.OnDataContextChanged;
-import com.kk.binding.kernel.PropertyChangedEventArgs;
-import com.kk.binding.util.BindDesignLog;
+import com.kk.binding.property.PropertyChangedEventArgs;
+import com.kk.binding.util.BindLog;
 import com.kk.binding.view.BindViewUtil;
 
 import java.util.Arrays;
@@ -38,7 +38,7 @@ public class BindViewGroupAdapter<T extends ViewGroup> extends ViewGroupAdapter 
         dp.setOnDataContextTargetChangedListener(new OnDataContextChanged() {
             @Override
             public boolean onDataContextChanged(DependencyObject dpo, PropertyChangedEventArgs args) {
-                BindDesignLog.d("Binding-BindViewGroupAdapter", "setDataContextTargetChanged "
+                BindLog.d("Binding-BindViewGroupAdapter", "setDataContextTargetChanged "
                         + "\n viewGroup = " + (getViewGroup().isInEditMode() ? getViewGroup().getClass().toString() : getViewGroup().toString())
                         + "\n oldValue = " + (args.getOldValue() != null ? args.getOldValue().toString() : null)
                         + "\n newValue = " + (args.getNewValue() != null ? args.getNewValue().toString() : null));
