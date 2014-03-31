@@ -4,15 +4,17 @@ CoolAndroidBinding
 Json(Object)+DynamicXml+DesignPreview
 
 ## Features
- * Directly bind Object to View
- * Converter support
- * Command Binding support(Pre define UrlNavCommand, etc)
- * Preview in design mode(specify dataContext through Object Class name or raw/json)
+ * Non-invasive, super lightweight, Compatible with android coding style, work as an optional plugin
+ * Directly bind object to view
+ * Converter support(scalable)
+ * Command Binding support(Pre define UrlNavCommand, etc, scalable)
+ * Custom Bind value setter(scalable)
+ * Preview in design mode(specify dataContext through class name or raw/json)
  * Binding list data to ViewGroup + ViewPager support
 
-## TODO(Not Support)
- * Binding list data to ListView and paging
- * Dynamic xml
+## TODO(Not Support now)
+ * Binding list data to ListView and pagination
+ * Dynamic xml :)
 
 
 ###Simple usage
