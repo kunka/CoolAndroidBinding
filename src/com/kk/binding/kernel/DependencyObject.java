@@ -18,6 +18,7 @@ package com.kk.binding.kernel;
 import com.kk.binding.converter.IValueConverter;
 import com.kk.binding.listener.ListenerToCommand;
 import com.kk.binding.property.PropertyChangedEventArgs;
+import com.kk.binding.register.MethodCache;
 import com.kk.binding.util.BindLog;
 
 import java.lang.reflect.Method;
@@ -81,12 +82,22 @@ public class DependencyObject {
         resolveTargetObject(dataContext);
         Object targetObject = getResolvedTargetObject();
         boolean handled = false;
-        if (/*targetObject != oldTargetObject &&*/ dataContextTargetChangedListener != null) {
-            BindLog.d(TAG, "dataContext Changed: \ntarget= "
-                    + (originTarget != null ? (BindLog.isInDesignMode() ? originTarget.getClass().toString() : originTarget.toString()) : null)
-                    + "\n oldValue= " + (oldTargetObject != null ? oldTargetObject.toString() : null)
-                    + "\n newValue= " + (targetObject != null ? targetObject.toString() : null));
-            handled = dataContextTargetChangedListener.onDataContextChanged(this, new PropertyChangedEventArgs(ViewFactory.BINDING_DATA_CONTEXT, oldTargetObject, targetObject));
+        if (dataContextTargetChangedListener != null) {
+            if (targetObject != oldTargetObject) {
+                BindLog.d(TAG, "dataContext Changed: \ntarget= "
+                        + (originTarget != null ? (BindLog.isInDesignMode() ? originTarget.getClass().toString() : originTarget.toString()) : null)
+                        + "\n oldValue= " + (oldTargetObject != null ? oldTargetObject.toString() : null)
+                        + "\n newValue= " + (targetObject != null ? targetObject.toString() : null));
+                handled = dataContextTargetChangedListener.onDataContextChanged(this, new PropertyChangedEventArgs(ViewFactory.BINDING_DATA_CONTEXT, oldTargetObject, targetObject));
+            } else {
+                {
+                    BindLog.d(TAG, "dataContext Invalidate: \ntarget= "
+                            + (originTarget != null ? (BindLog.isInDesignMode() ? originTarget.getClass().toString() : originTarget.toString()) : null)
+                            + "\n oldValue= " + (oldTargetObject != null ? oldTargetObject.toString() : null)
+                            + "\n newValue= " + (targetObject != null ? targetObject.toString() : null));
+                    handled = dataContextTargetChangedListener.onDataContextInvalidated(this, new PropertyChangedEventArgs(ViewFactory.BINDING_DATA_CONTEXT, oldTargetObject, targetObject));
+                }
+            }
         }
 
         oldTargetObject = targetObject;
@@ -98,7 +109,6 @@ public class DependencyObject {
         for (Binding binding : bindings) {
             binding.setDataContext(targetObject);
         }
-        // TODO: handle command
         for (CommandBinding cmdBinding : cmdBindings) {
             cmdBinding.setDataContext(targetObject);
         }
@@ -110,6 +120,7 @@ public class DependencyObject {
      *
      * @param dataContext
      */
+
     public void resolveTargetObject(Object dataContext) {
         for (Binding binding : bindings) {
             if (binding.getDependencyProperty() != null && ViewFactory.BINDING_DATA_CONTEXT.equals(binding.getDependencyProperty().getPropertyName())) {
@@ -172,7 +183,6 @@ public class DependencyObject {
         String fieldName = dp.getPropertyName();
         String firstLetter = fieldName.substring(0, 1).toUpperCase();
         String setMethodName = "set" + firstLetter + fieldName.substring(1);
-        Method setMethod = null;
 
         // parse value
         Class<?> propertyType = dp.getPropertyType();//type = int.class
@@ -216,16 +226,22 @@ public class DependencyObject {
                 + "\n value = " + (value != null ? value.toString() : null)
                 + "\n setValue = " + (setValue != null ? (setValue.getClass().toString() + setValue.toString()) : null));
 
-        // get set method
-        try {
-            setMethod = originTarget.getClass().getMethod(setMethodName, dp.getPropertyType());
-        } catch (Exception e) {
-            BindLog.e(TAG, "getMethod failed, targetClass = \n" + originTarget.getClass().toString()
-                    + "\n e = " + e.toString());
+        Class<?> clazz = originTarget.getClass();
+        Method setMethod = MethodCache.obtain(setMethodName, clazz);
+        if (setMethod == null) {
+            // get set method
+            try {
+                setMethod = originTarget.getClass().getMethod(setMethodName, dp.getPropertyType());
+            } catch (Exception e) {
+                BindLog.e(TAG, "getMethod failed, targetClass = \n" + originTarget.getClass().toString()
+                        + "\n e = " + e.toString());
+            }
+            if (setMethod != null)
+                MethodCache.register(setMethodName, clazz, setMethod);
         }
 
         // invoke
-        if (setMethod != null && originTarget != null) {
+        if (setMethod != null) {
             try {
                 setMethod.setAccessible(true);
                 setMethod.invoke(originTarget, setValue);
@@ -241,10 +257,10 @@ public class DependencyObject {
     public void setCmdBindings(ListenerToCommand ltc, final CommandBinding commandBinding) {
         if (ltc == null || commandBinding == null)
             return;
-        BindLog.d(TAG, "setCmdBindings: target = \n"
-                + (originTarget != null ? (BindLog.isInDesignMode() ? originTarget.getClass().toString() : originTarget.toString()) : null)
-                + "\n commandName = " + commandBinding.getCommandName()
-                + "\n commandParamPath = " + commandBinding.getCommandParamPath());
+//        BindLog.d(TAG, "setCmdBindings: target = \n"
+//                + (originTarget != null ? (BindLog.isInDesignMode() ? originTarget.getClass().toString() : originTarget.toString()) : null)
+//                + "\n commandName = " + commandBinding.getCommandName()
+//                + "\n commandParamPath = " + commandBinding.getCommandParamPath());
         commandBinding.setListenerToCommand(ltc);
         cmdBindings.add(commandBinding);
     }
@@ -255,10 +271,10 @@ public class DependencyObject {
     public void setBindings(DependencyProperty dp, final Binding binding) {
         if (dp == null || binding == null)
             return;
-        BindLog.d(TAG, "setBindings: target = \n"
-                + (originTarget != null ? (BindLog.isInDesignMode() ? originTarget.getClass().toString() : originTarget.toString()) : null)
-                + "\n propertyName = " + dp.getPropertyName()
-                + "\n path = " + binding.getPath());
+//        BindLog.d(TAG, "setBindings: target = \n"
+//                + (originTarget != null ? (BindLog.isInDesignMode() ? originTarget.getClass().toString() : originTarget.toString()) : null)
+//                + "\n propertyName = " + dp.getPropertyName()
+//                + "\n path = " + binding.getPath());
         binding.setDependencyProperty(dp);
         binding.setDependencyObject(this);
         bindings.add(binding);
@@ -266,8 +282,6 @@ public class DependencyObject {
 
     public static Object parseBindValue(Object target, String bindExpression) {
         if (bindExpression == null || target == null)
-            return null;
-        if (target == null)
             return null;
         if (bindExpression.startsWith("$"))
             return bindExpression.substring(1);
@@ -341,15 +355,22 @@ public class DependencyObject {
         if (o == null || fieldName == null) {
             return null;
         }
+        String firstLetter = fieldName.substring(0, 1).toUpperCase();
+        String getter = "get" + firstLetter + fieldName.substring(1);
+        Class<?> clazz = o.getClass();
+        Method method = MethodCache.obtain(getter, clazz);
         try {
-            String firstLetter = fieldName.substring(0, 1).toUpperCase();
-            String getter = "get" + firstLetter + fieldName.substring(1);
-            Method method = o.getClass().getMethod(getter, new Class[]{});
-            return method.invoke(o);
+            if (method == null) {
+                method = clazz.getMethod(getter, new Class[]{});
+            }
+            if (method != null) {
+                MethodCache.register(getter, clazz, method);
+                return method.invoke(o);
+            }
         } catch (Exception e) {
-            BindLog.d(TAG, "getFieldValueByName: e = " + e);
-            return null;
+            BindLog.e(TAG, "getFieldValueByName: e = " + e);
         }
+        return null;
     }
 
     public static Object converterValue(Object value, IValueConverter converter) {

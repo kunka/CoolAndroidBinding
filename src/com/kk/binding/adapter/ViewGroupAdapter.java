@@ -27,14 +27,14 @@ import android.widget.BaseAdapter;
 public class ViewGroupAdapter<T extends ViewGroup> {
     private static final String TAG = "Binding-ViewGroupAdapter";
 
-    public interface OnItemClickListener<T> {
-        void onItemClick(T viewGroup, View child, int position);
-    }
+//    public interface OnItemClickListener<T> {
+//        void onItemClick(T viewGroup, View child, int position);
+//    }
 
     private T viewGroup;
     protected BaseAdapter mAdapter;
     protected DataSetObserver mDataSetObserver;
-    private OnItemClickListener<T> mOnItemClickListener;
+//    private OnItemClickListener<T> mOnItemClickListener;
 
     public ViewGroupAdapter(T viewGroup) {
         this.viewGroup = viewGroup;
@@ -53,9 +53,9 @@ public class ViewGroupAdapter<T extends ViewGroup> {
         return viewGroup;
     }
 
-    public void setOnItemClickListener(OnItemClickListener<T> onItemClickListener) {
-        this.mOnItemClickListener = onItemClickListener;
-    }
+//    public void setOnItemClickListener(OnItemClickListener<T> onItemClickListener) {
+//        this.mOnItemClickListener = onItemClickListener;
+//    }
 
     public void setAdapter(BaseAdapter adapter) {
         if (mAdapter != adapter) {
@@ -87,30 +87,26 @@ public class ViewGroupAdapter<T extends ViewGroup> {
 
     public void reloadView() {
         Log.d(TAG, "reloadView");
+        viewGroup.removeAllViews();
         if (mAdapter == null) {
-            viewGroup.removeAllViews();
             return;
         }
         int count = mAdapter.getCount();
-        if (viewGroup.getChildCount() > count) {
-            viewGroup.removeViews(count, viewGroup.getChildCount() - count);
-        }
-        int childCount = viewGroup.getChildCount();
         for (int i = 0; i < count; i++) {
-            // reuse view instead of recreate to optimize performance
-            View child = i < childCount ? viewGroup.getChildAt(i) : null;
-            final View view = mAdapter.getView(i, child, viewGroup);
+            final View view = mAdapter.getView(i, null, viewGroup);
             if (view != null) {
-                final int index = i;
-                view.setOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View v) {
-                        Log.d(TAG, "onItemClick index = " + index);
-                        if (mOnItemClickListener != null) {
-                            mOnItemClickListener.onItemClick(viewGroup, view, index);
-                        }
-                    }
-                });
+//                final int index = i;
+//                view.setOnClickListener(new View.OnClickListener() {
+//                    @Override
+//                    public void onClick(View v) {
+//                        Log.d(TAG, "onItemClick index = " + index);
+//                        if (mOnItemClickListener != null) {
+//                            mOnItemClickListener.onItemClick(viewGroup, view, index);
+//                        }
+//                    }
+//                });
+            } else {
+                Log.w(TAG, "mAdapter getView return null");
             }
         }
     }
@@ -131,16 +127,18 @@ public class ViewGroupAdapter<T extends ViewGroup> {
             View child = i < childCount ? viewGroup.getChildAt(i) : null;
             final View view = mAdapter.getView(i, child, viewGroup);
             if (view != null) {
-                final int index = i;
-                view.setOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View v) {
-                        Log.d(TAG, "onItemClick index = " + index);
-                        if (mOnItemClickListener != null) {
-                            mOnItemClickListener.onItemClick(viewGroup, view, index);
-                        }
-                    }
-                });
+//                final int index = i;
+//                view.setOnClickListener(new View.OnClickListener() {
+//                    @Override
+//                    public void onClick(View v) {
+//                        Log.d(TAG, "onItemClick index = " + index);
+//                        if (mOnItemClickListener != null) {
+//                            mOnItemClickListener.onItemClick(viewGroup, view, index);
+//                        }
+//                    }
+//                });
+            } else {
+                Log.w(TAG, "mAdapter getView return null");
             }
         }
     }

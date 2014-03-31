@@ -16,14 +16,13 @@
 package com.kk.binding.adapter;
 
 import android.support.v4.view.ViewPager;
-
-import java.util.List;
-
 import com.kk.binding.kernel.DependencyObject;
 import com.kk.binding.kernel.OnDataContextChanged;
 import com.kk.binding.property.PropertyChangedEventArgs;
 import com.kk.binding.util.BindLog;
 import com.kk.binding.view.BindViewUtil;
+
+import java.util.List;
 
 /**
  * Created by hk on 13-12-5.
@@ -52,6 +51,10 @@ public class BindViewPagerAdapter<T extends ViewPager> extends ViewPagerAdapter 
                 } else {
                     setAdapter(null);
                 }
+                return true;
+            }
+
+            @Override public boolean onDataContextInvalidated(DependencyObject dpo, PropertyChangedEventArgs args) {
                 return true;
             }
         });

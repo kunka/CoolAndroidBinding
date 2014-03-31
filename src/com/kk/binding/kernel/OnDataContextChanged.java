@@ -19,4 +19,6 @@ import com.kk.binding.property.PropertyChangedEventArgs;
 
 public interface OnDataContextChanged {
     public boolean onDataContextChanged(DependencyObject dpo, PropertyChangedEventArgs args);
+
+    public boolean onDataContextInvalidated(DependencyObject dpo, PropertyChangedEventArgs args);
 }

@@ -22,6 +22,7 @@ import com.kk.binding.property.PropertyChangedEventArgs;
 import com.kk.binding.util.BindLog;
 import com.kk.binding.view.BindViewUtil;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
@@ -44,22 +45,41 @@ public class BindViewGroupAdapter<T extends ViewGroup> extends ViewGroupAdapter 
                         + "\n newValue = " + (args.getNewValue() != null ? args.getNewValue().toString() : null));
 
                 Object obj = args.getNewValue();
+                SimpleBindListAdapter adapter = (SimpleBindListAdapter) getAdapter();
                 if (obj instanceof List<?>) {
-                    if (getAdapter() == null) {
+                    if (adapter == null) {
                         setAdapter(new SimpleBindListAdapter(getViewGroup().getContext(), mResId, (List<Object>) obj));
                     } else {
-                        SimpleBindListAdapter adapter = (SimpleBindListAdapter) getAdapter();
                         adapter.setData((List<Object>) obj);
+                        adapter.notifyDataSetInvalidated();
                     }
                 } else if (obj instanceof Object[]) {
-                    if (getAdapter() == null) {
+                    if (adapter == null) {
                         setAdapter(new SimpleBindListAdapter(getViewGroup().getContext(), mResId, ((Object[]) obj)));
                     } else {
-                        SimpleBindListAdapter adapter = (SimpleBindListAdapter) getAdapter();
                         adapter.setData(Arrays.asList(obj));
+                        adapter.notifyDataSetInvalidated();
                     }
                 } else {
                     setAdapter(null);
+                }
+                return true;
+            }
+
+            @Override public boolean onDataContextInvalidated(DependencyObject dpo, PropertyChangedEventArgs args) {
+                if (getAdapter() != null) {
+                    SimpleBindListAdapter adapter = (SimpleBindListAdapter) getAdapter();
+                    Object obj = args.getNewValue();
+                    if (obj instanceof List<?>) {
+                        adapter.setData((List<Object>) obj);
+                        getAdapter().notifyDataSetInvalidated();
+                    } else if (obj instanceof Object[]) {
+                        adapter.setData(Arrays.asList(obj));
+                        getAdapter().notifyDataSetInvalidated();
+                    } else {
+                        adapter.setData(new ArrayList<Object>());
+                        getAdapter().notifyDataSetInvalidated();
+                    }
                 }
                 return true;
             }

@@ -64,6 +64,10 @@ public class BindListViewAdapter<T extends ListView> extends ListViewAdapter {
                 }
                 return true;
             }
+
+            @Override public boolean onDataContextInvalidated(DependencyObject dpo, PropertyChangedEventArgs args) {
+                return true;
+            }
         });
     }
 }

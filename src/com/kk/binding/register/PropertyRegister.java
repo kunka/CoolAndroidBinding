@@ -20,8 +20,8 @@ import android.widget.ImageView;
 import android.widget.RatingBar;
 import android.widget.TextView;
 import com.kk.binding.kernel.DependencyProperty;
-import com.kk.binding.util.BindLog;
 import com.kk.binding.kernel.ViewFactory;
+import com.kk.binding.util.BindLog;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -137,6 +137,8 @@ public class PropertyRegister {
 
     public static DependencyProperty register(String propertyName, Class<?> propertyType, Class<?> ownerType,
                                               Object defaultValue) {
+        if (propertyName == null || propertyType == null || ownerType == null)
+            throw new IllegalArgumentException("null argument");
         HashMap<String, DependencyProperty> propertyHashMap = getPropertyHashMap().get(ownerType);
         if (propertyHashMap == null) {
             propertyHashMap = new HashMap<String, DependencyProperty>();

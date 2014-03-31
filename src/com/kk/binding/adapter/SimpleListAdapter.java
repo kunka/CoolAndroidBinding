@@ -24,6 +24,7 @@ import android.widget.BaseAdapter;
 import com.kk.binding.util.BindLog;
 
 import java.util.List;
+import java.util.concurrent.TimeUnit;
 
 /**
  * Created by xj on 13-7-6.
@@ -71,34 +72,32 @@ public abstract class SimpleListAdapter<T> extends BaseAdapter {
             return convertView;
 
         View v = convertView;
+        boolean isLogOpen = BindLog.isLogOpen();
+        long start = 0;
+
         if (convertView == null) {
-            long start = 0;
-            if (BindLog.isLogOpen()) {
+            if (isLogOpen) {
                 start = System.nanoTime();
             }
 
             v = inflateView(mResId, viewGroup);
 
-            if (BindLog.isLogOpen()) {
+            if (isLogOpen) {
                 long end = System.nanoTime();
-                BindLog.d(TAG, "getView, inflate time(ms) = " + (end - start) / 1000000);
+                BindLog.d(TAG, "getView, inflate time(ms) = " + TimeUnit.NANOSECONDS.toMillis(end - start));
             }
         }
 
-        long start = 0;
-        if (BindLog.isLogOpen()) {
+        if (isLogOpen) {
             start = System.nanoTime();
-        }
-
-        if (BindLog.isLogOpen()) {
             BindLog.d(TAG, "onBindData, position = " + position + " totalCount = " + getCount());
         }
 
         onBindData(v, mData.get(position), position);
 
-        if (BindLog.isLogOpen()) {
+        if (isLogOpen) {
             long end = System.nanoTime();
-            long delta = (end - start) / 1000000;
+            long delta = TimeUnit.NANOSECONDS.toMillis(end - start);
             // Only log the unusual time
             if (delta > 2)
                 BindLog.w(TAG, "onBindData, time(ms) = " + delta);
@@ -118,12 +117,11 @@ public abstract class SimpleListAdapter<T> extends BaseAdapter {
     protected View inflateView(int resourceId, ViewGroup parent) {
         LayoutInflater layoutInflater = (LayoutInflater) mContext
                 .getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-        ViewGroup vp = (ViewGroup) layoutInflater.inflate(resourceId, parent);
-        return vp.getChildAt(vp.getChildCount() - 1);
+        ViewGroup vg = (ViewGroup) layoutInflater.inflate(resourceId, parent);
+        return vg.getChildAt(vg.getChildCount() - 1);
     }
 
     public void setData(List<T> data) {
         mData = data;
-        notifyDataSetInvalidated();
     }
 }

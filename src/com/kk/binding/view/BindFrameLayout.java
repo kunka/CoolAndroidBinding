@@ -169,7 +169,7 @@ public class BindFrameLayout extends FrameLayout {
             Binding bd = new Binding();
             String attrValue = ViewFactory.parseBindingSyntactic(this, dataContext);
             if (attrValue != null) {
-                bd.setPath(ViewFactory.parseBindingSyntactic(this, dataContext));
+                bd.setPath(attrValue);
                 DependencyProperty dp = PropertyRegister.obtain(ViewFactory.BINDING_DATA_CONTEXT, Object.class);
                 BindViewUtil.getDependencyObject(this).setBindings(dp, bd);
             }

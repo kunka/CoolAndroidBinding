@@ -104,13 +104,13 @@ public class BindViewUtil {
         setDataContext(view, obj);
     }
 
-    private static void setDataContext(final View view, final Object dataContext, int level) {
-        if (view == null) //|| getBindDataObject(view) == dataContext)
+    private static void setDataContextInner(final View view, final Object dataContext) {
+        if (view == null || getBindDataObject(view) == dataContext)
             return;
         // view.toString() will throw exception when you set a view's id in xml
-        BindLog.d(TAG, "setDataContext : view(" + level + ") = \n"
-                + (view.isInEditMode() ? view.getClass().getName() : view.toString())
-                + "\n dataContext= " + (dataContext != null ? dataContext.toString() : null));
+//        BindLog.d(TAG, "setDataContext : view(" + level + ") = \n"
+//                + (view.isInEditMode() ? view.getClass().getName() : view.toString())
+//                + "\n dataContext= " + (dataContext != null ? dataContext.toString() : null));
         view.setTag(R.id.tag_for_binding_data_object, dataContext);
 
         DependencyObject dpo = getDependencyObject(view);
@@ -119,13 +119,11 @@ public class BindViewUtil {
 
         if (view instanceof ViewGroup) {
             Object targetObject = dpo.getResolvedTargetObject();
-            ++level;
             ViewGroup vg = (ViewGroup) view;
             int count = vg.getChildCount();
             for (int i = 0; i < count; i++) {
                 View v = vg.getChildAt(i);
-                BindLog.d(TAG, "setDataContext : child(" + i + "), total(" + count + ")");
-                setDataContext(v, targetObject, level);
+                setDataContext(v, targetObject);
             }
         }
     }
@@ -136,7 +134,7 @@ public class BindViewUtil {
             start = System.nanoTime();
         }
 
-        setDataContext(view, dataContext, 0);
+        setDataContextInner(view, dataContext);
 
         if (BindLog.isLogOpen()) {
             long end = System.nanoTime();

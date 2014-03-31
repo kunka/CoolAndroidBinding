@@ -64,7 +64,7 @@ public class ViewFactory implements Factory {
 
     @Override
     public View onCreateView(String name, Context context, AttributeSet attrs) {
-        BindLog.d(TAG, "onCreateView name = " + name);
+//        BindLog.d(TAG, "onCreateView name = " + name);
         View view = createViewByInflater(name, context, attrs);
         if (view == null)
             return null;
@@ -73,7 +73,7 @@ public class ViewFactory implements Factory {
             String attrName = attrs.getAttributeName(i);
             String attrValue = attrs.getAttributeValue(BINDING_NAMESPACE, attrName);
             if (attrValue != null && attrName != null) {
-                BindLog.d(TAG, "onCreateView parseBindingAttribute: attrName = " + attrName + " attrValue = " + attrValue);
+//                BindLog.d(TAG, "onCreateView parseBindingAttribute: attrName = " + attrName + " attrValue = " + attrValue);
                 if (attrName.startsWith(BINDING_NAME_PREFIX)) {
                     parseAttribute(view, attrName, attrValue);
                 } else if (attrName.equals(BINDING_DATA_CONTEXT)) {
@@ -94,7 +94,7 @@ public class ViewFactory implements Factory {
             else
                 viewFullName = "android.widget." + name;
 
-            BindLog.d(TAG, "onCreateView viewFullName = " + viewFullName);
+//            BindLog.d(TAG, "onCreateView viewFullName = " + viewFullName);
             return mInflater.createView(viewFullName, null, attrs);
         } catch (Exception e) {
             // design mode cannot find custom class?! inflate will failed, shit! :(
